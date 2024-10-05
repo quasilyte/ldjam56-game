@@ -114,14 +114,26 @@ func (c *troopDeployController) Init(ctx gscene.InitContext) {
 	c.startButton.GetWidget().Disabled = true
 	rows.AddChild(c.startButton)
 
+	c.deployEnemyTroops()
+
 	game.G.UI.Build(ctx.Scene, rows)
 }
 
 func (c *troopDeployController) Update(delta float64) {}
 
-func (c *troopDeployController) onUnitDeployed(row, col int) {
-	u := game.G.State.CurrentStage.Teams[0].Units[c.deployed]
+func (c *troopDeployController) deployEnemyTroops() {
+	stage := game.G.State.CurrentStage
+	for _, u := range stage.Teams[1].Units {
+		var rowcol [2]int
+		switch {
+		case u.Stats.Infantry:
+			rowcol = gmath.RandElem(&game.G.Rand, stage.Level.EnemyInfantrySpots)
+		}
+		c.deployUnit(u, rowcol[0], rowcol[1])
+	}
+}
 
+func (c *troopDeployController) deployUnit(u *gcombat.Unit, row, col int) {
 	pos := gmath.Vec{
 		X: float64(col*64) + 32,
 		Y: float64(row*64) + 32,
@@ -131,7 +143,16 @@ func (c *troopDeployController) onUnitDeployed(row, col int) {
 
 	sprite := game.G.NewSprite(u.Stats.Image)
 	sprite.Pos.Offset = c.bgSprite.Pos.Offset.Add(u.Pos)
+	if u.Team != game.G.State.CurrentStage.Teams[0] {
+		sprite.SetHorizontalFlip(true)
+	}
 	c.scene.AddGraphics(sprite, 0)
+}
+
+func (c *troopDeployController) onUnitDeployed(row, col int) {
+	u := game.G.State.CurrentStage.Teams[0].Units[c.deployed]
+
+	c.deployUnit(u, row, col)
 
 	c.deployed++
 	c.updateTroopsDeployedCounter()

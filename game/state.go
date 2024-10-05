@@ -7,7 +7,8 @@ import (
 type State struct {
 	Level int
 
-	Retries int
+	Retries    int
+	Casualties int
 
 	Credits int
 

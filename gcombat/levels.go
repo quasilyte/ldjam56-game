@@ -4,6 +4,7 @@ type LevelDef struct {
 	Tiles [][]rune
 
 	EnemyTroops []rune
+	EnemyDeploy [][]rune
 
 	CardPicks int
 
@@ -25,6 +26,9 @@ var LevelList = []*LevelDef{
 	// Units:
 	// * 'R'=rifle
 	// * 'L'=laser
+	//
+	// Deployment:
+	// * 'i'=infantry
 
 	{
 		// Level 1:
@@ -39,6 +43,13 @@ var LevelList = []*LevelDef{
 			{' ', ' ', ' ', ' ', ' ', ' '},
 			{'F', 'F', 'F', 'F', ' ', ' '},
 			{' ', 'M', 'M', 'F', ' ', ' '},
+		},
+		EnemyDeploy: [][]rune{
+			{'F', ' ', 'M', ' ', ' ', ' '},
+			{' ', ' ', 'M', 'M', 'M', ' '},
+			{' ', ' ', ' ', ' ', ' ', 'i'},
+			{'F', 'F', 'F', 'F', ' ', 'i'},
+			{' ', 'M', 'M', 'F', ' ', 'i'},
 		},
 		EnemyTroops: []rune{'L', 'L', 'L', 'L'},
 		CardPicks:   2,

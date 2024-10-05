@@ -4,6 +4,8 @@ type Level struct {
 	EnemyTroops []UnitKind
 	EnemyCards  []CardKind
 
+	EnemyInfantrySpots [][2]int
+
 	Tiles [][]TileKind
 
 	CardPicks   int
@@ -43,6 +45,15 @@ func LoadLevel(level *LevelDef) *Level {
 				k = TileForest
 			}
 			result.Tiles[i][j] = k
+		}
+	}
+
+	for i, rowTiles := range level.EnemyDeploy {
+		for j, colTag := range rowTiles {
+			switch colTag {
+			case 'i':
+				result.EnemyInfantrySpots = append(result.EnemyInfantrySpots, [2]int{i, j})
+			}
 		}
 	}
 
