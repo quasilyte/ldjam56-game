@@ -9,10 +9,9 @@ import (
 	"github.com/quasilyte/gmath"
 	"github.com/quasilyte/gscene"
 	"github.com/quasilyte/ldjam56-game/assets"
-	"github.com/quasilyte/ldjam56-game/dat"
 	"github.com/quasilyte/ldjam56-game/eui"
 	"github.com/quasilyte/ldjam56-game/game"
-	"github.com/quasilyte/ldjam56-game/scenes/groundscape"
+	"github.com/quasilyte/ldjam56-game/scenes"
 )
 
 func main() {
@@ -36,10 +35,10 @@ func main() {
 
 	ebiten.SetFullscreen(true)
 
-	// game.G.SceneManager.ChangeScene(scenes.NewMainMenuController())
-	game.G.SceneManager.ChangeScene(groundscape.NewController(groundscape.ControllerConfig{
-		Level: dat.LevelList[0],
-	}))
+	game.G.SceneManager.ChangeScene(scenes.NewMainMenuController())
+	// game.G.SceneManager.ChangeScene(groundscape.NewController(groundscape.ControllerConfig{
+	// 	Level: dat.LevelList[0],
+	// }))
 
 	runner := &gameRunner{}
 	if err := ebiten.RunGame(runner); err != nil {
