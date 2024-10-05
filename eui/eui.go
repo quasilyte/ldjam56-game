@@ -57,8 +57,8 @@ func (b *Builder) Init() {
 		hover := loadNineSliced(l, assets.ImageUIButtonHover, 26, 20)
 		pressed := loadNineSliced(l, assets.ImageUIButtonPressed, 26, 20)
 		buttonPadding := widget.Insets{
-			Left:   28,
-			Right:  28,
+			Left:   12,
+			Right:  12,
 			Top:    6,
 			Bottom: 6,
 		}

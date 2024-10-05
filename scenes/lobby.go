@@ -8,7 +8,6 @@ import (
 	"github.com/ebitenui/ebitenui/widget"
 	"github.com/quasilyte/gscene"
 	"github.com/quasilyte/ldjam56-game/assets"
-	"github.com/quasilyte/ldjam56-game/dat"
 	"github.com/quasilyte/ldjam56-game/eui"
 	"github.com/quasilyte/ldjam56-game/game"
 	"github.com/quasilyte/ldjam56-game/gcombat"
@@ -27,7 +26,7 @@ func NewLobbyController() *lobbyController {
 func (c *lobbyController) Init(ctx gscene.InitContext) {
 	root := eui.NewTopLevelRows()
 
-	c.level = gcombat.LoadLevel(dat.LevelList[game.G.State.Level])
+	c.level = gcombat.LoadLevel(gcombat.LevelList[game.G.State.Level])
 
 	ctx.Scene.AddGraphics(sceneutil.NewBackgroundImage(), 0)
 
@@ -55,7 +54,12 @@ func (c *lobbyController) Init(ctx gscene.InitContext) {
 		panel.AddChild(rows)
 
 		rows.AddChild(game.G.UI.NewText(eui.TextConfig{
-			Text: fmt.Sprintf("Credits: %s\n", styles.Normal(strconv.Itoa(game.G.State.Credits))),
+			AlignLeft: true,
+			Text: strings.Join([]string{
+				fmt.Sprintf("Credits: %s", styles.Normal(strconv.Itoa(game.G.State.Credits))),
+				fmt.Sprintf("Tactic phases: %s", styles.Normal(strconv.Itoa(c.level.CardPicks))),
+				fmt.Sprintf("Hint: %s", styles.Normal(c.level.Hint)),
+			}, "\n"),
 		}))
 
 		cols := widget.NewContainer(
@@ -121,6 +125,9 @@ func (c *lobbyController) Init(ctx gscene.InitContext) {
 	root.AddChild(game.G.UI.NewButton(eui.ButtonConfig{
 		Text:     "READY",
 		MinWidth: 160,
+		OnClick: func() {
+			game.G.SceneManager.ChangeScene(NewCardpickController())
+		},
 	}))
 
 	game.G.UI.Build(ctx.Scene, root)

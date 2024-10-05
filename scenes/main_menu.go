@@ -44,7 +44,9 @@ func (c *mainMenuController) Init(ctx gscene.InitContext) {
 					gcombat.UnitRifle,
 					gcombat.UnitRifle,
 				},
+				CardsUnlocked: make(map[gcombat.CardKind]struct{}),
 			}
+			game.G.State.EnterLevel()
 			game.G.SceneManager.ChangeScene(NewLobbyController())
 		},
 	}))

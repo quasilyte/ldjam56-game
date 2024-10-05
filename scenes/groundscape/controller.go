@@ -8,8 +8,8 @@ import (
 	"github.com/quasilyte/gmath"
 	"github.com/quasilyte/gscene"
 	"github.com/quasilyte/ldjam56-game/assets"
-	"github.com/quasilyte/ldjam56-game/dat"
 	"github.com/quasilyte/ldjam56-game/game"
+	"github.com/quasilyte/ldjam56-game/gcombat"
 	"github.com/quasilyte/ldjam56-game/scenes/sceneutil"
 	"github.com/quasilyte/ldjam56-game/styles"
 )
@@ -17,13 +17,13 @@ import (
 type Controller struct {
 	scene *gscene.Scene
 
-	level *dat.Level
+	level *gcombat.Level
 
 	worldOffset gmath.Vec
 }
 
 type ControllerConfig struct {
-	Level *dat.Level
+	Level *gcombat.Level
 }
 
 func NewController(config ControllerConfig) *Controller {
@@ -79,16 +79,16 @@ func (c *Controller) generateLevelImage() *ebiten.Image {
 		vector.StrokeLine(img, float32(mapWidth), 0, float32(mapWidth), float32(mapHeight), 1, styles.ColorBright.Color(), false)
 	}
 	for rowNum, rowTiles := range c.level.Tiles {
-		for colNum, colTag := range rowTiles {
+		for colNum, tileKind := range rowTiles {
 			x := colNum * 64
 			y := rowNum * 64
 			var tileImg resource.ImageID
-			switch colTag {
-			case ' ':
+			switch tileKind {
+			case gcombat.TilePlains:
 				tileImg = assets.ImageTilePlains
-			case 'M':
+			case gcombat.TileMountains:
 				tileImg = assets.ImageTileMountains
-			case 'F':
+			case gcombat.TileForest:
 				tileImg = assets.ImageTileForest
 			}
 			var opts ebiten.DrawImageOptions
