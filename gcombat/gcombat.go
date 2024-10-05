@@ -10,6 +10,21 @@ type Stage struct {
 	Time float64
 }
 
+type StageConfig struct {
+	Level *Level
+	Team1 *Team
+}
+
+func CreateStage(config StageConfig) *Stage {
+	stage := &Stage{
+		Teams: []*Team{
+			config.Team1,
+		},
+	}
+
+	return stage
+}
+
 type Map struct {
 	Tiles [][]Tile
 }
@@ -35,9 +50,19 @@ type Team struct {
 type Unit struct {
 	Stats *UnitStats
 
+	Team *Team
+
 	Pos gmath.Vec
 
 	HP float64
+}
+
+func NewUnit(k UnitKind) *Unit {
+	stats := &unitStatsTable[k]
+	return &Unit{
+		Stats: stats,
+		HP:    stats.MaxHP,
+	}
 }
 
 type UnitStats struct {
@@ -48,6 +73,22 @@ type UnitStats struct {
 	Speed float64
 
 	Infantry bool
+}
+
+var unitStatsTable = [...]UnitStats{
+	UnitRifle: {
+		Kind:     UnitRifle,
+		MaxHP:    10,
+		Speed:    32,
+		Infantry: true,
+	},
+
+	UnitLaser: {
+		Kind:     UnitLaser,
+		MaxHP:    12,
+		Speed:    20,
+		Infantry: true,
+	},
 }
 
 type UnitKind int

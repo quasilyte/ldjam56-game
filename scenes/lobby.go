@@ -40,6 +40,22 @@ func (c *lobbyController) Init(ctx gscene.InitContext) {
 			MinWidth: 440,
 		})
 
+		panel.AddChild(game.G.UI.NewText(eui.TextConfig{
+			AlignLeft: true,
+			Text: strings.Join([]string{
+				fmt.Sprintf("Retries total: %s", styles.Normal(strconv.Itoa(game.G.State.Retries))),
+				fmt.Sprintf("Credits: %s", styles.Normal(strconv.Itoa(game.G.State.Credits))),
+			}, "\n"),
+		}))
+
+		root.AddChild(panel)
+	}
+
+	{
+		panel := game.G.UI.NewPanel(eui.PanelConfig{
+			MinWidth: 440,
+		})
+
 		rows := widget.NewContainer(
 			widget.ContainerOpts.Layout(widget.NewRowLayout(
 				widget.RowLayoutOpts.Spacing(12),
@@ -56,7 +72,6 @@ func (c *lobbyController) Init(ctx gscene.InitContext) {
 		rows.AddChild(game.G.UI.NewText(eui.TextConfig{
 			AlignLeft: true,
 			Text: strings.Join([]string{
-				fmt.Sprintf("Credits: %s", styles.Normal(strconv.Itoa(game.G.State.Credits))),
 				fmt.Sprintf("Tactic phases: %s", styles.Normal(strconv.Itoa(c.level.CardPicks))),
 				fmt.Sprintf("Hint: %s", styles.Normal(c.level.Hint)),
 			}, "\n"),

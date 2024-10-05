@@ -7,7 +7,11 @@ import (
 type State struct {
 	Level int
 
+	Retries int
+
 	Credits int
+
+	CurrentStage *gcombat.Stage
 
 	CardsUnlocked map[gcombat.CardKind]struct{}
 

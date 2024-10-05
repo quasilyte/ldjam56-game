@@ -70,12 +70,6 @@ func (c *cardpickController) Init(ctx gscene.InitContext) {
 		for j, k := range rowCards {
 			stacked := widget.NewContainer(
 				widget.ContainerOpts.Layout(widget.NewStackedLayout()),
-				// widget.ContainerOpts.WidgetOpts(
-				// 	widget.WidgetOpts.LayoutData(widget.GridLayoutData{
-				// 		HorizontalPosition: widget.GridLayoutPositionCenter,
-				// 		VerticalPosition:   widget.GridLayoutPositionCenter,
-				// 	}),
-				// ),
 			)
 			btn := game.G.UI.NewButton(eui.ButtonConfig{
 				Font:      assets.FontTiny,
@@ -130,6 +124,20 @@ func (c *cardpickController) Init(ctx gscene.InitContext) {
 
 	c.startButton = game.G.UI.NewButton(eui.ButtonConfig{
 		Text: "START",
+		OnClick: func() {
+			team := &gcombat.Team{}
+			units := make([]*gcombat.Unit, len(game.G.State.Units))
+			for i, u := range game.G.State.Units {
+				units[i] = gcombat.NewUnit(u)
+				units[i].Team = team
+			}
+			team.Units = units
+			stage := gcombat.CreateStage(gcombat.StageConfig{
+				Level: c.level,
+				Team1: team,
+			})
+			game.G.State.CurrentStage = stage
+		},
 	})
 	c.startButton.GetWidget().Disabled = true
 	root.AddChild(c.startButton)
