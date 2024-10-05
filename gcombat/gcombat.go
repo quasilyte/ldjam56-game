@@ -13,12 +13,14 @@ type Stage struct {
 type StageConfig struct {
 	Level *Level
 	Team1 *Team
+	Team2 *Team
 }
 
 func CreateStage(config StageConfig) *Stage {
 	stage := &Stage{
 		Teams: []*Team{
 			config.Team1,
+			config.Team2,
 		},
 	}
 

@@ -2,6 +2,7 @@ package gcombat
 
 type Level struct {
 	EnemyTroops []UnitKind
+	EnemyCards  []CardKind
 
 	Tiles [][]TileKind
 
@@ -12,8 +13,9 @@ type Level struct {
 
 func LoadLevel(level *LevelDef) *Level {
 	result := &Level{
-		CardPicks: level.CardPicks,
-		Hint:      level.Hint,
+		CardPicks:  level.CardPicks,
+		Hint:       level.Hint,
+		EnemyCards: level.EnemyCards,
 	}
 
 	for _, unitTag := range level.EnemyTroops {

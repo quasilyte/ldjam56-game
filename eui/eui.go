@@ -145,9 +145,10 @@ type TextConfig struct {
 
 	LayoutData any
 
-	AlignLeft  bool
-	AlignRight bool
-	AlignTop   bool
+	AlignLeft   bool
+	ForceBBCode bool
+	AlignRight  bool
+	AlignTop    bool
 }
 
 func (b *Builder) NewText(config TextConfig) *widget.Text {
@@ -185,7 +186,7 @@ func (b *Builder) NewText(config TextConfig) *widget.Text {
 	default:
 		opts = append(opts, widget.TextOpts.Position(widget.TextPositionCenter, verticalPos))
 	}
-	if strings.Contains(config.Text, "[color=") {
+	if config.ForceBBCode || strings.Contains(config.Text, "[color=") {
 		opts = append(opts, widget.TextOpts.ProcessBBCode(true))
 	}
 	return widget.NewText(opts...)

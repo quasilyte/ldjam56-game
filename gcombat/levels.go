@@ -10,6 +10,8 @@ type LevelDef struct {
 	Hint string
 
 	NewCards []CardKind
+
+	EnemyCards []CardKind
 }
 
 var LevelList = []*LevelDef{
@@ -45,6 +47,10 @@ var LevelList = []*LevelDef{
 			CardSuppressiveFire,
 
 			CardLuckyShot,
+		},
+		EnemyCards: []CardKind{
+			CardLuckyShot,
+			CardSuppressiveFire,
 		},
 	},
 }

@@ -7,6 +7,7 @@ import (
 	"github.com/ebitenui/ebitenui/widget"
 	"github.com/quasilyte/gmath"
 	"github.com/quasilyte/gscene"
+	"github.com/quasilyte/gslices"
 	"github.com/quasilyte/ldjam56-game/assets"
 	"github.com/quasilyte/ldjam56-game/eui"
 	"github.com/quasilyte/ldjam56-game/game"
@@ -23,6 +24,10 @@ type cardpickController struct {
 	cardsSelection [][]gcombat.CardKind
 	cardsPicked    []gcombat.CardKind
 	cardButtons    [][]*cardpickButton
+
+	enemyCardsPool   []gcombat.CardKind
+	enemyLabel       *widget.Text
+	enemyCardsPicked []gcombat.CardKind
 
 	startButton *widget.Button
 }
@@ -42,6 +47,9 @@ func (c *cardpickController) Init(ctx gscene.InitContext) {
 
 	c.cardsSelection = c.generateCards()
 
+	c.enemyCardsPool = gslices.Clone(c.level.EnemyCards)
+	gmath.Shuffle(&game.G.Rand, c.enemyCardsPool)
+
 	root := eui.NewTopLevelRows()
 
 	ctx.Scene.AddGraphics(sceneutil.NewBackgroundImage(), 0)
@@ -51,18 +59,21 @@ func (c *cardpickController) Init(ctx gscene.InitContext) {
 		Font: assets.Font2,
 	}))
 
+	gridAnchor := widget.NewContainer(widget.ContainerOpts.Layout(widget.NewAnchorLayout()))
 	grid := widget.NewContainer(
 		widget.ContainerOpts.Layout(widget.NewGridLayout(
 			widget.GridLayoutOpts.Columns(len(c.cardsSelection)),
 			widget.GridLayoutOpts.Spacing(4, 4),
 		)),
 		widget.ContainerOpts.WidgetOpts(
-			widget.WidgetOpts.LayoutData(widget.GridLayoutData{
-				HorizontalPosition: widget.GridLayoutPositionCenter,
+			widget.WidgetOpts.LayoutData(widget.AnchorLayoutData{
+				HorizontalPosition: widget.AnchorLayoutPositionCenter,
+				VerticalPosition:   widget.AnchorLayoutPositionCenter,
 			}),
 		),
 	)
-	root.AddChild(grid)
+	gridAnchor.AddChild(grid)
+	root.AddChild(gridAnchor)
 
 	c.cardButtons = make([][]*cardpickButton, len(c.cardsSelection))
 	for i, rowCards := range c.cardsSelection {
@@ -122,19 +133,51 @@ func (c *cardpickController) Init(ctx gscene.InitContext) {
 	c.updateCounterLabel()
 	root.AddChild(c.counterLabel)
 
+	{
+		panel := game.G.UI.NewPanel(eui.PanelConfig{})
+		c.enemyLabel = game.G.UI.NewText(eui.TextConfig{
+			MinWidth:    220,
+			Font:        assets.FontTiny,
+			Text:        "You have the first pick!",
+			ForceBBCode: true,
+			LayoutData: widget.AnchorLayoutData{
+				VerticalPosition:   widget.AnchorLayoutPositionCenter,
+				HorizontalPosition: widget.AnchorLayoutPositionCenter,
+			},
+		})
+		panel.AddChild(c.enemyLabel)
+		root.AddChild(panel)
+	}
+
 	c.startButton = game.G.UI.NewButton(eui.ButtonConfig{
 		Text: "START",
 		OnClick: func() {
-			team := &gcombat.Team{}
-			units := make([]*gcombat.Unit, len(game.G.State.Units))
+			team1 := &gcombat.Team{}
+			units1 := make([]*gcombat.Unit, len(game.G.State.Units))
 			for i, u := range game.G.State.Units {
-				units[i] = gcombat.NewUnit(u)
-				units[i].Team = team
+				units1[i] = gcombat.NewUnit(u)
+				units1[i].Team = team1
 			}
-			team.Units = units
+			team1.Units = units1
+			for _, k := range c.cardsPicked {
+				team1.Cards = append(team1.Cards, gcombat.Card{Kind: k})
+			}
+
+			team2 := &gcombat.Team{}
+			units2 := make([]*gcombat.Unit, len(c.level.EnemyTroops))
+			for i, u := range c.level.EnemyTroops {
+				units2[i] = gcombat.NewUnit(u)
+				units2[i].Team = team2
+			}
+			team2.Units = units2
+			for _, k := range c.enemyCardsPicked {
+				team2.Cards = append(team2.Cards, gcombat.Card{Kind: k})
+			}
+
 			stage := gcombat.CreateStage(gcombat.StageConfig{
 				Level: c.level,
-				Team1: team,
+				Team1: team1,
+				Team2: team2,
 			})
 			game.G.State.CurrentStage = stage
 		},
@@ -166,6 +209,13 @@ func (c *cardpickController) onCardPicked(row, col int) {
 				label.Color = styles.ColorNormal.Color()
 			}
 		}
+	}
+
+	{
+		enemySelectedCard := c.enemyCardsPool[len(c.enemyCardsPool)-1]
+		c.enemyCardsPool = c.enemyCardsPool[:len(c.enemyCardsPool)-1]
+		c.enemyCardsPicked = append(c.enemyCardsPicked, enemySelectedCard)
+		c.enemyLabel.Label = fmt.Sprintf("Enemy picks %s", styles.Background(enemySelectedCard.Info().Name))
 	}
 
 	selectedButton := c.cardButtons[row][col]

@@ -11,6 +11,10 @@ var (
 	ColorBright     = graphics.RGB(0xa6fba6)
 )
 
+func Background(s string) string {
+	return BB(ColorBackground, s)
+}
+
 func Dark(s string) string {
 	return BB(ColorDark, s)
 }
