@@ -10,6 +10,7 @@ import (
 	"github.com/quasilyte/gscene"
 	"github.com/quasilyte/ldjam56-game/assets"
 	"github.com/quasilyte/ldjam56-game/dat"
+	"github.com/quasilyte/ldjam56-game/eui"
 	"github.com/quasilyte/ldjam56-game/game"
 	"github.com/quasilyte/ldjam56-game/scenes/groundscape"
 )
@@ -26,11 +27,16 @@ func main() {
 	game.G.Loader = resource.NewLoader(audioContext)
 	game.G.Loader.OpenAssetFunc = assets.MakeOpenAssetFunc()
 	game.G.Rand.SetSeed(time.Now().UnixNano())
+	game.G.UI = eui.NewBuilder(eui.Config{
+		Loader: game.G.Loader,
+	})
 
 	assets.RegisterResources(game.G.Loader)
+	game.G.UI.Init()
 
 	ebiten.SetFullscreen(true)
 
+	// game.G.SceneManager.ChangeScene(scenes.NewMainMenuController())
 	game.G.SceneManager.ChangeScene(groundscape.NewController(groundscape.ControllerConfig{
 		Level: dat.LevelList[0],
 	}))

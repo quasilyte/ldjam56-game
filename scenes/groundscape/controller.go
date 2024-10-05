@@ -2,6 +2,7 @@ package groundscape
 
 import (
 	"github.com/hajimehoshi/ebiten/v2"
+	"github.com/hajimehoshi/ebiten/v2/vector"
 	graphics "github.com/quasilyte/ebitengine-graphics"
 	resource "github.com/quasilyte/ebitengine-resource"
 	"github.com/quasilyte/gmath"
@@ -9,6 +10,8 @@ import (
 	"github.com/quasilyte/ldjam56-game/assets"
 	"github.com/quasilyte/ldjam56-game/dat"
 	"github.com/quasilyte/ldjam56-game/game"
+	"github.com/quasilyte/ldjam56-game/scenes/sceneutil"
+	"github.com/quasilyte/ldjam56-game/styles"
 )
 
 type Controller struct {
@@ -32,15 +35,7 @@ func NewController(config ControllerConfig) *Controller {
 func (c *Controller) Init(ctx gscene.InitContext) {
 	c.scene = ctx.Scene
 
-	{
-		screenBg := ebiten.NewImage(1, 1)
-		screenBg.Fill(graphics.RGB(0x111412).Color())
-		s := graphics.NewSprite()
-		s.SetImage(screenBg)
-		s.SetScaleX(game.G.WindowSize.X)
-		s.SetScaleY(game.G.WindowSize.Y)
-		ctx.Scene.AddGraphics(s, 0)
-	}
+	ctx.Scene.AddGraphics(sceneutil.NewBackgroundImage(), 0)
 
 	{
 		bg := c.generateLevelImage()
@@ -77,6 +72,12 @@ func (c *Controller) generateLevelImage() *ebiten.Image {
 	mapHeight := len(c.level.Tiles) * 64
 	mapWidth := len(c.level.Tiles[0]) * 64
 	img := ebiten.NewImage(mapWidth, mapHeight)
+	{
+		vector.StrokeLine(img, 0, 1, float32(mapWidth), 0, 1, styles.ColorBright.Color(), false)
+		vector.StrokeLine(img, 0, float32(mapHeight), float32(mapWidth), float32(mapHeight), 1, styles.ColorBright.Color(), false)
+		vector.StrokeLine(img, 1, 0, 1, float32(mapHeight), 1, styles.ColorBright.Color(), false)
+		vector.StrokeLine(img, float32(mapWidth), 0, float32(mapWidth), float32(mapHeight), 1, styles.ColorBright.Color(), false)
+	}
 	for rowNum, rowTiles := range c.level.Tiles {
 		for colNum, colTag := range rowTiles {
 			x := colNum * 64

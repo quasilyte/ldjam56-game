@@ -5,6 +5,7 @@ import (
 	resource "github.com/quasilyte/ebitengine-resource"
 	"github.com/quasilyte/gmath"
 	"github.com/quasilyte/gscene"
+	"github.com/quasilyte/ldjam56-game/eui"
 )
 
 var G *GlobalContext
@@ -17,6 +18,8 @@ type GlobalContext struct {
 	Loader *resource.Loader
 
 	Rand gmath.Rand
+
+	UI *eui.Builder
 }
 
 func (ctx *GlobalContext) NewSprite(id resource.ImageID) *graphics.Sprite {
