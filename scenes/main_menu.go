@@ -8,6 +8,7 @@ import (
 	"github.com/quasilyte/ldjam56-game/assets"
 	"github.com/quasilyte/ldjam56-game/eui"
 	"github.com/quasilyte/ldjam56-game/game"
+	"github.com/quasilyte/ldjam56-game/gcombat"
 	"github.com/quasilyte/ldjam56-game/scenes/sceneutil"
 )
 
@@ -32,13 +33,25 @@ func (c *mainMenuController) Init(ctx gscene.InitContext) {
 
 	root.AddChild(game.G.UI.NewButton(eui.ButtonConfig{
 		Text:     "START",
-		MinWidth: 160,
+		MinWidth: 440,
+		OnClick: func() {
+			game.G.State = &game.State{
+				Level:   0,
+				Credits: 0,
+				Units: []gcombat.UnitKind{
+					gcombat.UnitRifle,
+					gcombat.UnitRifle,
+					gcombat.UnitRifle,
+					gcombat.UnitRifle,
+				},
+			}
+			game.G.SceneManager.ChangeScene(NewLobbyController())
+		},
 	}))
 
 	{
 		settings := game.G.UI.NewButton(eui.ButtonConfig{
-			Text:     "SETTINGS",
-			MinWidth: 160,
+			Text: "SETTINGS",
 		})
 		settings.GetWidget().Disabled = true
 		root.AddChild(settings)
@@ -46,8 +59,7 @@ func (c *mainMenuController) Init(ctx gscene.InitContext) {
 
 	{
 		settings := game.G.UI.NewButton(eui.ButtonConfig{
-			Text:     "CREDITS",
-			MinWidth: 160,
+			Text: "CREDITS",
 		})
 		settings.GetWidget().Disabled = true
 		root.AddChild(settings)
@@ -57,8 +69,7 @@ func (c *mainMenuController) Init(ctx gscene.InitContext) {
 		root.AddChild(game.G.UI.NewText(eui.TextConfig{Text: ""}))
 
 		root.AddChild(game.G.UI.NewButton(eui.ButtonConfig{
-			Text:     "EXIT",
-			MinWidth: 160,
+			Text: "EXIT",
 			OnClick: func() {
 				os.Exit(0)
 			},

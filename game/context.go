@@ -13,6 +13,8 @@ var G *GlobalContext
 type GlobalContext struct {
 	SceneManager *gscene.Manager
 
+	State *State
+
 	WindowSize gmath.Vec
 
 	Loader *resource.Loader

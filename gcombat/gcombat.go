@@ -54,5 +54,20 @@ type UnitKind int
 
 const (
 	UnitUnknown UnitKind = iota
-	UnitGatling
+
+	UnitRifle
+	UnitLaser
+
+	NumUnitKinds
 )
+
+func (k UnitKind) String() string {
+	switch k {
+	case UnitRifle:
+		return "Rifle infantry"
+	case UnitLaser:
+		return "Laser infantry"
+	default:
+		return "?"
+	}
+}

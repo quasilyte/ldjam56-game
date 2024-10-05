@@ -5,5 +5,9 @@ import (
 )
 
 type State struct {
+	Level int
+
+	Credits int
+
 	Units []gcombat.UnitKind
 }

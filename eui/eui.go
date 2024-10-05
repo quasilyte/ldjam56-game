@@ -19,6 +19,7 @@ type Widget = widget.PreferredSizeLocateableWidget
 
 type Builder struct {
 	button *buttonDefaults
+	panel  *panelDefaults
 
 	currentObject *SceneObject
 
@@ -29,6 +30,11 @@ type buttonDefaults struct {
 	image      *widget.ButtonImage
 	padding    widget.Insets
 	textColors *widget.ButtonTextColor
+}
+
+type panelDefaults struct {
+	image   *image.NineSlice
+	padding widget.Insets
 }
 
 type Config struct {
@@ -67,6 +73,19 @@ func (b *Builder) Init() {
 			textColors: &widget.ButtonTextColor{
 				Idle:     styles.ColorBright.Color(),
 				Disabled: styles.ColorNormal.Color(),
+			},
+		}
+	}
+
+	{
+		normal := loadNineSliced(l, assets.ImageUIPanel, 18, 18)
+		b.panel = &panelDefaults{
+			image: normal,
+			padding: widget.Insets{
+				Left:   12,
+				Right:  12,
+				Top:    12,
+				Bottom: 12,
 			},
 		}
 	}
@@ -126,8 +145,6 @@ type TextConfig struct {
 
 	LayoutData any
 
-	BBCode bool
-
 	AlignLeft  bool
 	AlignRight bool
 	AlignTop   bool
@@ -168,10 +185,51 @@ func (b *Builder) NewText(config TextConfig) *widget.Text {
 	default:
 		opts = append(opts, widget.TextOpts.Position(widget.TextPositionCenter, verticalPos))
 	}
-	if config.BBCode {
+	if strings.Contains(config.Text, "[color=") {
 		opts = append(opts, widget.TextOpts.ProcessBBCode(true))
 	}
 	return widget.NewText(opts...)
+}
+
+type PanelConfig struct {
+	MinWidth   int
+	MinHeight  int
+	Padding    *widget.Insets
+	LayoutData any
+}
+
+func (b *Builder) NewPanel(config PanelConfig) *widget.Container {
+	defaults := b.panel
+
+	padding := defaults.padding
+	if config.Padding != nil {
+		padding = *config.Padding
+	}
+
+	var ld any
+	if config.LayoutData != nil {
+		ld = config.LayoutData
+	} else {
+		ld = widget.AnchorLayoutData{
+			HorizontalPosition: widget.AnchorLayoutPositionCenter,
+			VerticalPosition:   widget.AnchorLayoutPositionCenter,
+		}
+	}
+
+	opts := []widget.ContainerOpt{
+		widget.ContainerOpts.BackgroundImage(defaults.image),
+		widget.ContainerOpts.Layout(widget.NewAnchorLayout(
+			widget.AnchorLayoutOpts.Padding(padding),
+		)),
+		widget.ContainerOpts.WidgetOpts(
+			widget.WidgetOpts.LayoutData(ld),
+			widget.WidgetOpts.MinSize(config.MinWidth, config.MinHeight),
+		),
+	}
+
+	panel := widget.NewContainer(opts...)
+
+	return panel
 }
 
 func (b *Builder) Build(scene *gscene.Scene, root *widget.Container) *ebitenui.UI {
