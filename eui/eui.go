@@ -18,8 +18,9 @@ import (
 type Widget = widget.PreferredSizeLocateableWidget
 
 type Builder struct {
-	button *buttonDefaults
-	panel  *panelDefaults
+	button     *buttonDefaults
+	tileButton *buttonDefaults
+	panel      *panelDefaults
 
 	currentObject *SceneObject
 
@@ -63,6 +64,32 @@ func (b *Builder) Init() {
 			Bottom: 6,
 		}
 		b.button = &buttonDefaults{
+			image: &widget.ButtonImage{
+				Idle:     idle,
+				Hover:    hover,
+				Pressed:  pressed,
+				Disabled: disabled,
+			},
+			padding: buttonPadding,
+			textColors: &widget.ButtonTextColor{
+				Idle:     styles.ColorBright.Color(),
+				Disabled: styles.ColorNormal.Color(),
+			},
+		}
+	}
+
+	{
+		disabled := loadNineSliced(l, assets.ImageUITileButtonDisabled, 0, 0)
+		idle := loadNineSliced(l, assets.ImageUITileButtonIdle, 0, 0)
+		hover := loadNineSliced(l, assets.ImageUITileButtonHover, 0, 0)
+		pressed := loadNineSliced(l, assets.ImageUITileButtonPressed, 0, 0)
+		buttonPadding := widget.Insets{
+			Left:   0,
+			Right:  0,
+			Top:    0,
+			Bottom: 0,
+		}
+		b.tileButton = &buttonDefaults{
 			image: &widget.ButtonImage{
 				Idle:     idle,
 				Hover:    hover,
@@ -131,6 +158,32 @@ func (b *Builder) NewButton(config ButtonConfig) *widget.Button {
 	if config.MinWidth != 0 || config.MinHeight != 0 {
 		options = append(options, widget.ButtonOpts.WidgetOpts(widget.WidgetOpts.MinSize(config.MinWidth, config.MinHeight)))
 	}
+
+	buttonWidget := widget.NewButton(options...)
+	return buttonWidget
+}
+
+type TileButtonConfig struct {
+	OnClick    func()
+	LayoutData any
+}
+
+func (b *Builder) NewTileButton(config TileButtonConfig) *widget.Button {
+	defaults := b.tileButton
+
+	padding := defaults.padding
+	options := []widget.ButtonOpt{
+		widget.ButtonOpts.Image(defaults.image),
+		widget.ButtonOpts.TextPadding(padding),
+	}
+
+	if config.OnClick != nil {
+		options = append(options, widget.ButtonOpts.ClickedHandler(func(args *widget.ButtonClickedEventArgs) {
+			config.OnClick()
+		}))
+	}
+
+	options = append(options, widget.ButtonOpts.WidgetOpts(widget.WidgetOpts.MinSize(64, 64)))
 
 	buttonWidget := widget.NewButton(options...)
 	return buttonWidget

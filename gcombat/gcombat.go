@@ -1,11 +1,18 @@
 package gcombat
 
 import (
+	"github.com/hajimehoshi/ebiten/v2"
+	resource "github.com/quasilyte/ebitengine-resource"
 	"github.com/quasilyte/gmath"
+	"github.com/quasilyte/ldjam56-game/assets"
 )
 
 type Stage struct {
 	Teams []*Team
+
+	Level *Level
+
+	MapBg *ebiten.Image
 
 	Time float64
 }
@@ -22,6 +29,7 @@ func CreateStage(config StageConfig) *Stage {
 			config.Team1,
 			config.Team2,
 		},
+		Level: config.Level,
 	}
 
 	return stage
@@ -70,6 +78,8 @@ func NewUnit(k UnitKind) *Unit {
 type UnitStats struct {
 	Kind UnitKind
 
+	Image resource.ImageID
+
 	MaxHP float64
 
 	Speed float64
@@ -79,6 +89,7 @@ type UnitStats struct {
 
 var unitStatsTable = [...]UnitStats{
 	UnitRifle: {
+		Image:    assets.ImageUnitRifle,
 		Kind:     UnitRifle,
 		MaxHP:    10,
 		Speed:    32,
@@ -86,6 +97,7 @@ var unitStatsTable = [...]UnitStats{
 	},
 
 	UnitLaser: {
+		Image:    assets.ImageUnitLaser,
 		Kind:     UnitLaser,
 		MaxHP:    12,
 		Speed:    20,

@@ -179,7 +179,9 @@ func (c *cardpickController) Init(ctx gscene.InitContext) {
 				Team1: team1,
 				Team2: team2,
 			})
+			stage.MapBg = sceneutil.DrawCombatMap(c.level)
 			game.G.State.CurrentStage = stage
+			game.G.SceneManager.ChangeScene(NewTroopDelpoyController())
 		},
 	})
 	c.startButton.GetWidget().Disabled = true

@@ -7,6 +7,8 @@ type LevelDef struct {
 
 	CardPicks int
 
+	DeployWidth int
+
 	Hint string
 
 	NewCards []CardKind
@@ -40,6 +42,7 @@ var LevelList = []*LevelDef{
 		},
 		EnemyTroops: []rune{'L', 'L', 'L', 'L'},
 		CardPicks:   2,
+		DeployWidth: 1,
 		NewCards: []CardKind{
 			CardInfatryCharge,
 			CardTakeCover,
