@@ -152,7 +152,7 @@ func (c *cardpickController) Init(ctx gscene.InitContext) {
 	c.startButton = game.G.UI.NewButton(eui.ButtonConfig{
 		Text: "START",
 		OnClick: func() {
-			team1 := &gcombat.Team{}
+			team1 := &gcombat.Team{Index: 0}
 			units1 := make([]*gcombat.Unit, len(game.G.State.Units))
 			for i, u := range game.G.State.Units {
 				units1[i] = gcombat.NewUnit(u)
@@ -163,7 +163,7 @@ func (c *cardpickController) Init(ctx gscene.InitContext) {
 				team1.Cards = append(team1.Cards, gcombat.Card{Kind: k})
 			}
 
-			team2 := &gcombat.Team{}
+			team2 := &gcombat.Team{Index: 1}
 			units2 := make([]*gcombat.Unit, len(c.level.EnemyTroops))
 			for i, u := range c.level.EnemyTroops {
 				units2[i] = gcombat.NewUnit(u)

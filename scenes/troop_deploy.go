@@ -11,6 +11,7 @@ import (
 	"github.com/quasilyte/ldjam56-game/eui"
 	"github.com/quasilyte/ldjam56-game/game"
 	"github.com/quasilyte/ldjam56-game/gcombat"
+	"github.com/quasilyte/ldjam56-game/scenes/groundscape"
 	"github.com/quasilyte/ldjam56-game/scenes/sceneutil"
 	"github.com/quasilyte/ldjam56-game/styles"
 )
@@ -109,6 +110,9 @@ func (c *troopDeployController) Init(ctx gscene.InitContext) {
 	c.startButton = game.G.UI.NewButton(eui.ButtonConfig{
 		Text: "FIGHT",
 		OnClick: func() {
+			game.G.SceneManager.ChangeScene(groundscape.NewController(groundscape.ControllerConfig{
+				Stage: game.G.State.CurrentStage,
+			}))
 		},
 	})
 	c.startButton.GetWidget().Disabled = true
@@ -140,6 +144,7 @@ func (c *troopDeployController) deployUnit(u *gcombat.Unit, row, col int) {
 	}
 	pos = pos.Add(game.G.Rand.Offset(-16, 16))
 	u.Pos = pos
+	u.SpawnPos = pos
 
 	sprite := game.G.NewSprite(u.Stats.Image)
 	sprite.Pos.Offset = c.bgSprite.Pos.Offset.Add(u.Pos)

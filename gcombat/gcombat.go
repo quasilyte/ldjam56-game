@@ -4,6 +4,7 @@ import (
 	"github.com/hajimehoshi/ebiten/v2"
 	resource "github.com/quasilyte/ebitengine-resource"
 	"github.com/quasilyte/gmath"
+	"github.com/quasilyte/gsignal"
 	"github.com/quasilyte/ldjam56-game/assets"
 )
 
@@ -12,9 +13,24 @@ type Stage struct {
 
 	Level *Level
 
+	Height float64
+	Width  float64
+
 	MapBg *ebiten.Image
 
 	Time float64
+}
+
+type Projectile struct {
+	Pos      gmath.Vec
+	Rotation gmath.Rad
+	Attacker *Unit
+	Target   *Unit
+	AimPos   gmath.Vec
+	GoodAim  bool
+	Disposed bool
+
+	EventDisposed gsignal.Event[gsignal.Void]
 }
 
 type StageConfig struct {
@@ -29,7 +45,9 @@ func CreateStage(config StageConfig) *Stage {
 			config.Team1,
 			config.Team2,
 		},
-		Level: config.Level,
+		Level:  config.Level,
+		Height: float64(64 * len(config.Level.Tiles)),
+		Width:  float64(64 * len(config.Level.Tiles[0])),
 	}
 
 	return stage
@@ -49,9 +67,13 @@ const (
 	TilePlains TileKind = iota
 	TileMountains
 	TileForest
+
+	NumTileKinds
 )
 
 type Team struct {
+	Index int
+
 	Units []*Unit
 
 	Cards []Card
@@ -62,9 +84,20 @@ type Unit struct {
 
 	Team *Team
 
-	Pos gmath.Vec
+	Reload float64
+
+	Pos      gmath.Vec
+	SpawnPos gmath.Vec
 
 	HP float64
+
+	Waypoint gmath.Vec
+
+	EventDisposed gsignal.Event[gsignal.Void]
+}
+
+func (u *Unit) IsDisposed() bool {
+	return u.HP <= 0
 }
 
 func NewUnit(k UnitKind) *Unit {
@@ -78,30 +111,72 @@ func NewUnit(k UnitKind) *Unit {
 type UnitStats struct {
 	Kind UnitKind
 
-	Image resource.ImageID
+	Image           resource.ImageID
+	ProjectileImage resource.ImageID
+
+	ProjectileHitRadius float64
+	Damage              float64
 
 	MaxHP float64
 
-	Speed float64
+	Speed          float64
+	TerrainSpeed   [NumTileKinds]float64
+	TerrainDefense [NumTileKinds]float64
+
+	Reload       float64
+	AccuracyDist float64
+	BaseAccuracy float64
 
 	Infantry bool
 }
 
 var unitStatsTable = [...]UnitStats{
 	UnitRifle: {
-		Image:    assets.ImageUnitRifle,
-		Kind:     UnitRifle,
-		MaxHP:    10,
-		Speed:    32,
-		Infantry: true,
+		Image:           assets.ImageUnitRifle,
+		ProjectileImage: assets.ImageProjectileRifle,
+		Kind:            UnitRifle,
+		MaxHP:           10,
+		Speed:           18,
+		TerrainSpeed: [NumTileKinds]float64{
+			TilePlains:    1.0,
+			TileForest:    1.0,
+			TileMountains: 0.2,
+		},
+		TerrainDefense: [NumTileKinds]float64{
+			TilePlains:    0.0,
+			TileForest:    0.75,
+			TileMountains: -0.2,
+		},
+		ProjectileHitRadius: 6,
+		Damage:              2,
+		Reload:              0.4,
+		AccuracyDist:        64 * 3,
+		BaseAccuracy:        0.4,
+		Infantry:            true,
 	},
 
 	UnitLaser: {
-		Image:    assets.ImageUnitLaser,
-		Kind:     UnitLaser,
-		MaxHP:    12,
-		Speed:    20,
-		Infantry: true,
+		Image:           assets.ImageUnitLaser,
+		ProjectileImage: assets.ImageProjectileLaser,
+		Kind:            UnitLaser,
+		MaxHP:           12,
+		Speed:           12,
+		TerrainSpeed: [NumTileKinds]float64{
+			TilePlains:    1.0,
+			TileForest:    0.8,
+			TileMountains: 0.15,
+		},
+		TerrainDefense: [NumTileKinds]float64{
+			TilePlains:    0.0,
+			TileForest:    0.55,
+			TileMountains: -0.2,
+		},
+		ProjectileHitRadius: 8,
+		Damage:              3,
+		Reload:              1.0,
+		AccuracyDist:        64 * 5,
+		BaseAccuracy:        0.6,
+		Infantry:            true,
 	},
 }
 

@@ -42,6 +42,8 @@ github.com/quasilyte/gmath v0.0.0-20240920163431-a42365a2073c h1:pOCmiE1lP24KHak
 github.com/quasilyte/gmath v0.0.0-20240920163431-a42365a2073c/go.mod h1:EbI+KMbALSVE2s0YFOQpR4uj66zBh9ter5P4CBMSuvA=
 github.com/quasilyte/gscene v0.0.0-20240611100302-1351fbba9610 h1:+IjgBa7jf17Spi74iwBcyXcGO6U7eOHR57eYvzbw9z8=
 github.com/quasilyte/gscene v0.0.0-20240611100302-1351fbba9610/go.mod h1:0GWl/j4N+4rfBx2pb+TFn4pnPvGz5rkWY89KrBGt2Go=
+github.com/quasilyte/gsignal v0.0.0-20240802120557-5896b3add8c1 h1:jGd8JVbr84sPP+LGFr5Iw2w1j4MowR2RQbbxwwkDccY=
+github.com/quasilyte/gsignal v0.0.0-20240802120557-5896b3add8c1/go.mod h1:qAMDDsI56AFnSrBZYG8Tj/Ys+sRsakd8Ho2be2S8Vfc=
 github.com/quasilyte/gslices v0.0.0-20240821003832-acb7f7276b03 h1:jRa80zDVqe4ft6y9S86LSP/3os7Smr1ic+Ti+j+oW4A=
 github.com/quasilyte/gslices v0.0.0-20240821003832-acb7f7276b03/go.mod h1:Ea1BF0zEO0kKDEXSwyiHg5i51dtnIjUk1TCWTvAHdY0=
 github.com/stretchr/objx v0.5.2 h1:xuMeJ0Sdp5ZMRXx/aWO6RZxdr3beISkG5/G/aIRr3pY=

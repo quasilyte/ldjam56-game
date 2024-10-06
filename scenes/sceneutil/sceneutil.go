@@ -24,10 +24,15 @@ func NewBackgroundImage() *graphics.Sprite {
 	return s
 }
 
-func CombatMapSprite(img *ebiten.Image) *graphics.Sprite {
+func CombatMapOffset(img *ebiten.Image) gmath.Vec {
 	var worldOffset gmath.Vec
 	worldOffset.X = float64((int(game.G.WindowSize.X) - img.Bounds().Dx()) / 2)
 	worldOffset.Y = 32
+	return worldOffset
+}
+
+func CombatMapSprite(img *ebiten.Image) *graphics.Sprite {
+	worldOffset := CombatMapOffset(img)
 
 	s := graphics.NewSprite()
 	s.SetCentered(false)
