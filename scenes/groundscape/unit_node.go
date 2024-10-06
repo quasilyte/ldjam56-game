@@ -8,6 +8,7 @@ import (
 	"github.com/quasilyte/ldjam56-game/game"
 	"github.com/quasilyte/ldjam56-game/gcombat"
 	"github.com/quasilyte/ldjam56-game/scenes/sceneutil"
+	"github.com/quasilyte/ldjam56-game/styles"
 )
 
 type unitNode struct {
@@ -29,6 +30,7 @@ func (u *unitNode) Init(scene *gscene.Scene) {
 	u.sprite.Pos.Base = &u.data.Pos
 	if u.data.Team.Index != 0 {
 		u.sprite.SetHorizontalFlip(true)
+		u.sprite.SetColorScale(styles.ColorBright.RotateHue(-90).ScaleRGB(1.2))
 	}
 	scene.AddGraphics(u.sprite, 0)
 

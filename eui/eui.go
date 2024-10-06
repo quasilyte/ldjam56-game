@@ -61,14 +61,14 @@ func (b *Builder) Init() {
 	l := b.loader
 
 	{
-		disabled := loadNineSliced(l, assets.ImageUIButtonDisabled, 26, 20)
-		idle := loadNineSliced(l, assets.ImageUIButtonIdle, 26, 20)
-		hover := loadNineSliced(l, assets.ImageUIButtonHover, 26, 20)
-		pressed := loadNineSliced(l, assets.ImageUIButtonPressed, 26, 20)
+		disabled := loadNineSliced(l, assets.ImageUIButtonDisabled, 26, 16)
+		idle := loadNineSliced(l, assets.ImageUIButtonIdle, 26, 16)
+		hover := loadNineSliced(l, assets.ImageUIButtonHover, 26, 16)
+		pressed := loadNineSliced(l, assets.ImageUIButtonPressed, 26, 16)
 		buttonPadding := widget.Insets{
 			Left:   12,
 			Right:  12,
-			Top:    6,
+			Top:    4,
 			Bottom: 6,
 		}
 		b.button = &buttonDefaults{

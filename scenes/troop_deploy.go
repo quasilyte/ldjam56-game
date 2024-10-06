@@ -156,6 +156,7 @@ func (c *troopDeployController) deployUnit(u *gcombat.Unit, row, col int) {
 	sprite.Pos.Offset = c.bgSprite.Pos.Offset.Add(u.Pos)
 	if u.Team != game.G.State.CurrentStage.Teams[0] {
 		sprite.SetHorizontalFlip(true)
+		sprite.SetColorScale(styles.ColorBright.RotateHue(-90).ScaleRGB(1.2))
 	}
 	c.scene.AddGraphics(sprite, 0)
 }

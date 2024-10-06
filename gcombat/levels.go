@@ -220,7 +220,7 @@ var LevelList = []*LevelDef{
 		EnemyCards: []CardKind{
 			CardInfantryCharge,
 			CardSuppressiveFire,
-			CardFocusFire,
+			CardIonStorm,
 			CardIonStorm,
 		},
 	},
