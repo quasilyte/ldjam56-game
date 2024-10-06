@@ -55,7 +55,7 @@ func (c *cardpickController) Init(ctx gscene.InitContext) {
 	ctx.Scene.AddGraphics(sceneutil.NewBackgroundImage(), 0)
 
 	root.AddChild(game.G.UI.NewText(eui.TextConfig{
-		Text: "Tactics",
+		Text: "Tactic Cards",
 		Font: assets.Font2,
 	}))
 
@@ -208,7 +208,7 @@ func (c *cardpickController) pickEnemyCard() {
 		enemySelectedCard := c.enemyCardsPool[len(c.enemyCardsPool)-1]
 		c.enemyCardsPool = c.enemyCardsPool[:len(c.enemyCardsPool)-1]
 		c.enemyCardsPicked = append(c.enemyCardsPicked, enemySelectedCard)
-		c.enemyLabel.Label = fmt.Sprintf("Enemy picks %s", styles.Background(enemySelectedCard.Info().Name))
+		c.enemyLabel.Label = fmt.Sprintf("Enemy picks %s", styles.Orange(enemySelectedCard.Info().Name))
 	} else {
 		c.enemyLabel.Label = "Tactics are scheduled!"
 	}
@@ -242,7 +242,7 @@ func (c *cardpickController) onCardPicked(row, col int) {
 			selectedButton.contents.AddChild(game.G.UI.NewText(eui.TextConfig{
 				Text:  word,
 				Font:  assets.FontTiny,
-				Color: styles.ColorBackground.Color(),
+				Color: styles.ColorOrange.Color(),
 				LayoutData: widget.RowLayoutData{
 					Position: widget.RowLayoutPositionCenter,
 					Stretch:  true,

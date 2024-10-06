@@ -73,7 +73,7 @@ func (c *lobbyController) Init(ctx gscene.InitContext) {
 		rows.AddChild(game.G.UI.NewText(eui.TextConfig{
 			AlignLeft: true,
 			Text: strings.Join([]string{
-				fmt.Sprintf("Tactic phases: %s", styles.Normal(strconv.Itoa(c.level.CardPicks))),
+				fmt.Sprintf("Tactic phases: %s cards", styles.Normal(strconv.Itoa(c.level.CardPicks))),
 				fmt.Sprintf("Hint: %s", styles.Normal(c.level.Hint)),
 			}, "\n"),
 		}))
@@ -98,7 +98,7 @@ func (c *lobbyController) Init(ctx gscene.InitContext) {
 				unitSet[u]++
 			}
 			var textLines []string
-			textLines = append(textLines, styles.Normal("[Your troops]"))
+			textLines = append(textLines, styles.Orange("[Your troops]"))
 			for i, count := range unitSet {
 				kind := gcombat.UnitKind(i)
 				if count == 0 {
@@ -118,7 +118,7 @@ func (c *lobbyController) Init(ctx gscene.InitContext) {
 				unitSet[u]++
 			}
 			var textLines []string
-			textLines = append(textLines, styles.Normal("[Enemy troops]"))
+			textLines = append(textLines, styles.Orange("[Enemy troops]"))
 			for i, count := range unitSet {
 				kind := gcombat.UnitKind(i)
 				if count == 0 {

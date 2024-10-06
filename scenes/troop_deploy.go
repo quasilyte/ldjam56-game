@@ -184,5 +184,5 @@ func (c *troopDeployController) updateTroopsDeployedCounter() {
 
 func (c *troopDeployController) updateCurrentlyDeploying() {
 	u := game.G.State.Units[c.deployed]
-	c.deployHint.Label = fmt.Sprintf("Currently deploying: %s", styles.Background(u.String()))
+	c.deployHint.Label = fmt.Sprintf("Currently deploying: %s", styles.Orange(u.String()))
 }

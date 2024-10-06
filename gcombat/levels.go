@@ -58,13 +58,11 @@ var LevelList = []*LevelDef{
 			{'F', 'F', 'F', 'F', ' ', 'i'},
 			{' ', 'M', 'M', 'F', ' ', 'i'},
 		},
-		// EnemyTroops: []rune{'L', 'L', 'L', 'L'},
-		EnemyTroops: []rune{'L'},
+		EnemyTroops: []rune{'L', 'L', 'L', 'L'},
 		CardPicks:   2,
 		DeployWidth: 1,
 		NewCards: []CardKind{
 			CardInfantryCharge,
-			CardTakeCover,
 
 			CardSuppressiveFire,
 
@@ -101,7 +99,7 @@ var LevelList = []*LevelDef{
 		CardPicks:   3,
 		DeployWidth: 2,
 		NewCards: []CardKind{
-			CardStandGround,
+			CardTakeCover,
 			CardFirstAid,
 		},
 		NewUnits: []UnitKind{
@@ -138,6 +136,7 @@ var LevelList = []*LevelDef{
 		CardPicks:   4,
 		DeployWidth: 2,
 		NewCards: []CardKind{
+			CardStandGround,
 			CardBadCover,
 		},
 		NewUnits: []UnitKind{

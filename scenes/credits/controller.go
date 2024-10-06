@@ -1,8 +1,7 @@
 package credits
 
 import (
-	"strings"
-
+	"github.com/ebitenui/ebitenui/widget"
 	"github.com/quasilyte/gscene"
 	"github.com/quasilyte/ldjam56-game/assets"
 	"github.com/quasilyte/ldjam56-game/eui"
@@ -32,15 +31,31 @@ func (c *controller) Init(ctx gscene.InitContext) {
 	})
 	root.AddChild(panel)
 
-	panel.AddChild(game.G.UI.NewText(eui.TextConfig{
-		Text: strings.Join([]string{
-			"Thank you for playing NebuLeet Troopers!",
-			"",
-			"Made for a LDJAM 56 by @quasilyte in ~20 hours",
-			"",
-			"Written in Go, powered by Ebitengine",
-		}, "\n"),
+	rows := widget.NewContainer(
+		widget.ContainerOpts.Layout(widget.NewRowLayout(
+			widget.RowLayoutOpts.Spacing(12),
+			widget.RowLayoutOpts.Direction(widget.DirectionVertical),
+		)),
+		widget.ContainerOpts.WidgetOpts(
+			widget.WidgetOpts.LayoutData(widget.AnchorLayoutData{
+				StretchHorizontal: true,
+			}),
+		),
+	)
+
+	rows.AddChild(game.G.UI.NewText(eui.TextConfig{
+		Text:       "Thank you for playing NebuLeet Troopers!",
+		LayoutData: widget.RowLayoutData{Stretch: true},
 	}))
+	rows.AddChild(game.G.UI.NewText(eui.TextConfig{
+		Text:       "Made for a LDJAM 56 by @quasilyte in ~20 hours",
+		LayoutData: widget.RowLayoutData{Stretch: true},
+	}))
+	rows.AddChild(game.G.UI.NewText(eui.TextConfig{
+		Text:       "Written in Go, powered by Ebitengine",
+		LayoutData: widget.RowLayoutData{Stretch: true},
+	}))
+	panel.AddChild(rows)
 
 	root.AddChild(game.G.UI.NewText(eui.TextConfig{Text: ""}))
 

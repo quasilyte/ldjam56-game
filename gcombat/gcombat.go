@@ -192,7 +192,7 @@ var unitStatsTable = [...]UnitStats{
 		Image:           assets.ImageUnitLaser,
 		ProjectileImage: assets.ImageProjectileLaser,
 		FireSound:       assets.AudioLaser1,
-		MaxHP:           12,
+		MaxHP:           15,
 		Speed:           12,
 		TerrainSpeed: [NumTileKinds]float64{
 			TilePlains:    1.0,
@@ -208,7 +208,7 @@ var unitStatsTable = [...]UnitStats{
 		Damage:              4,
 		AntiArmorDamage:     0.85,
 		Reload:              1.9,
-		AccuracyDist:        64 * 6,
+		AccuracyDist:        64 * 5,
 		BaseAccuracy:        0.65,
 		IonStorm:            true,
 		Infantry:            true,
@@ -255,7 +255,7 @@ var unitStatsTable = [...]UnitStats{
 		ProjectileImage: assets.ImageProjectileLaser,
 		FireSound:       assets.AudioHunter1,
 		MaxHP:           40,
-		Speed:           15,
+		Speed:           20,
 		TerrainSpeed: [NumTileKinds]float64{
 			TilePlains:    1.0,
 			TileForest:    0.8,
@@ -286,7 +286,7 @@ var unitStatsTable = [...]UnitStats{
 		ProjectileImage: assets.ImageProjectileTank,
 		FireSound:       assets.AudioTank1,
 		MaxHP:           65,
-		Speed:           18,
+		Speed:           20,
 		TerrainSpeed: [NumTileKinds]float64{
 			TilePlains:    1.0,
 			TileForest:    0.4,

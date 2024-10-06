@@ -240,7 +240,7 @@ func (r *Runner) unitSpeed(u *gcombat.Unit) float64 {
 	multiplier := u.Stats.TerrainSpeed[tile]
 	if u.Stats.Infantry {
 		if r.cardIsActive(u.Team.Index, gcombat.CardInfantryCharge) {
-			multiplier *= 1.33
+			multiplier *= 1.6
 		}
 	}
 	return u.Stats.Speed * multiplier
@@ -450,7 +450,11 @@ func (r *Runner) maybeOpenFire(u *gcombat.Unit) {
 			dist := u.Pos.DistanceTo(u2.Pos)
 			score := 1000.0 - dist
 			if !u2.Stats.Infantry {
-				score *= 0.5 + (u.Stats.AntiArmorDamage * 0.5)
+				if dist > u.Stats.AccuracyDist {
+					score *= 0.8 + (u.Stats.AntiArmorDamage * 0.2)
+				} else {
+					score *= 0.5 + (u.Stats.AntiArmorDamage * 0.5)
+				}
 			}
 			wasFocused := false
 			if focusFire && dist <= (1.5*u.Stats.AccuracyDist) {
