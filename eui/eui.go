@@ -196,7 +196,7 @@ func (b *Builder) NewButton(config ButtonConfig) *widget.Button {
 	if config.Tooltip != nil {
 		tt := widget.NewToolTip(
 			widget.ToolTipOpts.Content(b.NewTooltip(config.Tooltip)),
-			widget.ToolTipOpts.Delay(time.Second),
+			widget.ToolTipOpts.Delay(time.Second/3),
 		)
 		options = append(options, widget.ButtonOpts.WidgetOpts(widget.WidgetOpts.ToolTip(tt)))
 	}

@@ -12,6 +12,8 @@ type State struct {
 
 	Credits int
 
+	Easy bool
+
 	CurrentStage *gcombat.Stage
 
 	UnitsUnlocked [gcombat.NumUnitKinds]bool

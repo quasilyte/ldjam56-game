@@ -76,8 +76,8 @@ type Team struct {
 
 	Units []*Unit
 
-	Casualties      int
-	CasualtyRefunds int
+	Casualties   int
+	CasualtyCost int
 
 	Cards []Card
 }

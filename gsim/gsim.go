@@ -77,7 +77,7 @@ func (r *Runner) Update(delta float64) {
 	for _, u := range r.allUnits {
 		if u.IsDisposed() {
 			u.Team.Casualties++
-			u.Team.CasualtyRefunds += gmath.Iround(float64(u.Stats.Cost) * 0.2)
+			u.Team.CasualtyCost += u.Stats.Cost
 			u.EventDisposed.Emit(gsignal.Void{})
 			continue
 		}

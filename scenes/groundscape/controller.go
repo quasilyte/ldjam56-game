@@ -5,6 +5,7 @@ import (
 
 	"github.com/ebitenui/ebitenui/widget"
 	"github.com/quasilyte/ebitengine-graphics/particle"
+	"github.com/quasilyte/gmath"
 	"github.com/quasilyte/gscene"
 	"github.com/quasilyte/ldjam56-game/assets"
 	"github.com/quasilyte/ldjam56-game/eui"
@@ -178,7 +179,12 @@ func (c *Controller) initUI() {
 				}
 				game.G.State.EnterLevel()
 				game.G.State.Credits += c.stage.Level.Reward
-				game.G.State.Credits += c.stage.Teams[0].CasualtyRefunds
+				refundRate := 0.2
+				if game.G.State.Easy {
+					refundRate = 0.4
+				}
+				fmt.Println("rate=", refundRate, "=>", gmath.Scale(c.stage.Teams[0].CasualtyCost, refundRate))
+				game.G.State.Credits += gmath.Scale(c.stage.Teams[0].CasualtyCost, refundRate)
 				survivors := game.G.State.Units[:0]
 				for _, u := range c.stage.Teams[0].Units {
 					if u.HP > 0 {
