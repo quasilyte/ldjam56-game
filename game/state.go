@@ -14,6 +14,7 @@ type State struct {
 
 	CurrentStage *gcombat.Stage
 
+	UnitsUnlocked [gcombat.NumUnitKinds]bool
 	CardsUnlocked map[gcombat.CardKind]struct{}
 
 	Units []gcombat.UnitKind
@@ -24,5 +25,8 @@ func (s *State) EnterLevel() {
 
 	for _, k := range level.NewCards {
 		s.CardsUnlocked[k] = struct{}{}
+	}
+	for _, k := range level.NewUnits {
+		s.UnitsUnlocked[k] = true
 	}
 }

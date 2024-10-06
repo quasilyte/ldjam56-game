@@ -110,6 +110,10 @@ func NewUnit(k UnitKind) *Unit {
 	}
 }
 
+func GetUnitStats(k UnitKind) *UnitStats {
+	return &unitStatsTable[k]
+}
+
 type UnitStats struct {
 	Kind UnitKind
 
@@ -132,6 +136,8 @@ type UnitStats struct {
 	AccuracyDist float64
 	BaseAccuracy float64
 
+	Comment string
+
 	Infantry bool
 }
 
@@ -139,6 +145,7 @@ var unitStatsTable = [...]UnitStats{
 	UnitRifle: {
 		Kind:            UnitRifle,
 		Cost:            10,
+		Comment:         "Rushes its lane, strong at short-range",
 		Image:           assets.ImageUnitRifle,
 		ProjectileImage: assets.ImageProjectileRifle,
 		FireSound:       assets.AudioRifle1,
@@ -165,6 +172,7 @@ var unitStatsTable = [...]UnitStats{
 	UnitLaser: {
 		Kind:            UnitLaser,
 		Cost:            15,
+		Comment:         "A heavy laser guard, a situational mid-range support",
 		Image:           assets.ImageUnitLaser,
 		ProjectileImage: assets.ImageProjectileLaser,
 		FireSound:       assets.AudioLaser1,

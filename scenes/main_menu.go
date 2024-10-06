@@ -44,6 +44,9 @@ func (c *mainMenuController) Init(ctx gscene.InitContext) {
 					gcombat.UnitRifle,
 					gcombat.UnitRifle,
 				},
+				UnitsUnlocked: [gcombat.NumUnitKinds]bool{
+					gcombat.UnitRifle: true,
+				},
 				CardsUnlocked: make(map[gcombat.CardKind]struct{}),
 			}
 			game.G.State.EnterLevel()

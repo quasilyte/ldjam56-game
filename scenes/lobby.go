@@ -45,7 +45,7 @@ func (c *lobbyController) Init(ctx gscene.InitContext) {
 			Text: strings.Join([]string{
 				fmt.Sprintf("Retries total: %s", styles.Normal(strconv.Itoa(game.G.State.Retries))),
 				fmt.Sprintf("Casualties total: %s", styles.Normal(strconv.Itoa(game.G.State.Casualties))),
-				fmt.Sprintf("Credits: %s", styles.Normal(strconv.Itoa(game.G.State.Credits))),
+				fmt.Sprintf("Credits: %s$", styles.Normal(strconv.Itoa(game.G.State.Credits))),
 			}, "\n"),
 		}))
 

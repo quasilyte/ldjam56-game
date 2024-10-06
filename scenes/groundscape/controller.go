@@ -8,6 +8,7 @@ import (
 	"github.com/quasilyte/ldjam56-game/gcombat"
 	"github.com/quasilyte/ldjam56-game/gsim"
 	"github.com/quasilyte/ldjam56-game/scenes/sceneutil"
+	"github.com/quasilyte/ldjam56-game/scenes/unitshop"
 )
 
 type Controller struct {
@@ -108,10 +109,11 @@ func (c *Controller) initUI() {
 					}
 				}
 				game.G.State.Units = survivors
+				game.G.SceneManager.ChangeScene(unitshop.NewController(c.back))
 			} else {
 				game.G.State.Retries++
+				game.G.SceneManager.ChangeScene(c.back)
 			}
-			game.G.SceneManager.ChangeScene(c.back)
 		},
 		MinWidth: 300,
 	})

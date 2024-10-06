@@ -79,10 +79,10 @@ func (b *Builder) Init() {
 	}
 
 	{
-		disabled := loadNineSliced(l, assets.ImageUITileButtonDisabled, 0, 0)
-		idle := loadNineSliced(l, assets.ImageUITileButtonIdle, 0, 0)
-		hover := loadNineSliced(l, assets.ImageUITileButtonHover, 0, 0)
-		pressed := loadNineSliced(l, assets.ImageUITileButtonPressed, 0, 0)
+		disabled := loadNineSliced(l, assets.ImageUITileButtonDisabled, 26, 20)
+		idle := loadNineSliced(l, assets.ImageUITileButtonIdle, 26, 20)
+		hover := loadNineSliced(l, assets.ImageUITileButtonHover, 26, 20)
+		pressed := loadNineSliced(l, assets.ImageUITileButtonPressed, 26, 20)
 		buttonPadding := widget.Insets{
 			Left:   0,
 			Right:  0,
@@ -164,6 +164,9 @@ func (b *Builder) NewButton(config ButtonConfig) *widget.Button {
 }
 
 type TileButtonConfig struct {
+	Text       string
+	MinWidth   int
+	MinHeight  int
 	OnClick    func()
 	LayoutData any
 }
@@ -174,7 +177,6 @@ func (b *Builder) NewTileButton(config TileButtonConfig) *widget.Button {
 	padding := defaults.padding
 	options := []widget.ButtonOpt{
 		widget.ButtonOpts.Image(defaults.image),
-		widget.ButtonOpts.TextPadding(padding),
 	}
 
 	if config.OnClick != nil {
@@ -182,8 +184,18 @@ func (b *Builder) NewTileButton(config TileButtonConfig) *widget.Button {
 			config.OnClick()
 		}))
 	}
+	if config.Text != "" {
+		options = append(options,
+			widget.ButtonOpts.Text(config.Text, assets.FontTiny, b.button.textColors),
+			widget.ButtonOpts.TextPadding(padding))
+		if strings.Contains(config.Text, "[color=") {
+			options = append(options, widget.ButtonOpts.TextProcessBBCode(true))
+		}
+	}
 
-	options = append(options, widget.ButtonOpts.WidgetOpts(widget.WidgetOpts.MinSize(64, 64)))
+	if config.MinWidth != 0 || config.MinHeight != 0 {
+		options = append(options, widget.ButtonOpts.WidgetOpts(widget.WidgetOpts.MinSize(config.MinWidth, config.MinHeight)))
+	}
 
 	buttonWidget := widget.NewButton(options...)
 	return buttonWidget

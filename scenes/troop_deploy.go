@@ -70,6 +70,8 @@ func (c *troopDeployController) Init(ctx gscene.InitContext) {
 	for row := 0; row < len(stage.Level.Tiles); row++ {
 		for col := 0; col < len(stage.Level.Tiles[0]); col++ {
 			btn := game.G.UI.NewTileButton(eui.TileButtonConfig{
+				MinWidth:  64,
+				MinHeight: 64,
 				OnClick: func() {
 					c.onUnitDeployed(row, col)
 				},
