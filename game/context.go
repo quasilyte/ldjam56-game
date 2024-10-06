@@ -27,6 +27,8 @@ type GlobalContext struct {
 
 	UI *eui.Builder
 
+	SoundVolume int
+
 	NewMainMenuController func() gscene.Controller
 }
 

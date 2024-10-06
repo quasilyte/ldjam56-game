@@ -156,10 +156,10 @@ func (b *Builder) NewButton(config ButtonConfig) *widget.Button {
 	}
 
 	options = append(options, widget.ButtonOpts.ClickedHandler(func(args *widget.ButtonClickedEventArgs) {
-		b.audio.PlaySound(assets.AudioButtonClick)
 		if config.OnClick != nil {
 			config.OnClick()
 		}
+		b.audio.PlaySound(assets.AudioButtonClick)
 	}))
 
 	if config.MinWidth != 0 || config.MinHeight != 0 {
@@ -187,10 +187,10 @@ func (b *Builder) NewTileButton(config TileButtonConfig) *widget.Button {
 	}
 
 	options = append(options, widget.ButtonOpts.ClickedHandler(func(args *widget.ButtonClickedEventArgs) {
-		b.audio.PlaySound(assets.AudioButtonClickSoft)
 		if config.OnClick != nil {
 			config.OnClick()
 		}
+		b.audio.PlaySound(assets.AudioButtonClickSoft)
 	}))
 	if config.Text != "" {
 		options = append(options,

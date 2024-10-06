@@ -1,5 +1,5 @@
 bugs:
 * explosions/impacts
-* shader animation for walking?
+* particles for explosive attacks (orange pixels)
+* particles for tank movement (dust up)
 * sound settings
-* rework graphics

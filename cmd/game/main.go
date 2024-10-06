@@ -15,7 +15,9 @@ import (
 )
 
 func main() {
-	game.G = &game.GlobalContext{}
+	game.G = &game.GlobalContext{
+		SoundVolume: 3,
+	}
 	game.G.SceneManager = gscene.NewManager()
 	game.G.WindowSize = gmath.Vec{
 		X: 1920 / 2,

@@ -58,8 +58,10 @@ func (c *mainMenuController) Init(ctx gscene.InitContext) {
 	{
 		settings := game.G.UI.NewButton(eui.ButtonConfig{
 			Text: "SETTINGS",
+			OnClick: func() {
+				game.G.SceneManager.ChangeScene(NewSettingsController())
+			},
 		})
-		settings.GetWidget().Disabled = true
 		root.AddChild(settings)
 	}
 
