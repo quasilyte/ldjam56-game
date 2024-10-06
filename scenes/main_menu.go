@@ -9,6 +9,7 @@ import (
 	"github.com/quasilyte/ldjam56-game/eui"
 	"github.com/quasilyte/ldjam56-game/game"
 	"github.com/quasilyte/ldjam56-game/gcombat"
+	"github.com/quasilyte/ldjam56-game/scenes/credits"
 	"github.com/quasilyte/ldjam56-game/scenes/sceneutil"
 )
 
@@ -65,8 +66,10 @@ func (c *mainMenuController) Init(ctx gscene.InitContext) {
 	{
 		settings := game.G.UI.NewButton(eui.ButtonConfig{
 			Text: "CREDITS",
+			OnClick: func() {
+				game.G.SceneManager.ChangeScene(credits.NewController())
+			},
 		})
-		settings.GetWidget().Disabled = true
 		root.AddChild(settings)
 	}
 

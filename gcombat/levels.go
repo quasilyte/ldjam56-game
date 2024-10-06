@@ -58,8 +58,8 @@ var LevelList = []*LevelDef{
 			{'F', 'F', 'F', 'F', ' ', 'i'},
 			{' ', 'M', 'M', 'F', ' ', 'i'},
 		},
-		EnemyTroops: []rune{'L', 'L', 'L', 'L'},
-		// EnemyTroops: []rune{'T'},
+		// EnemyTroops: []rune{'L', 'L', 'L', 'L'},
+		EnemyTroops: []rune{'L'},
 		CardPicks:   2,
 		DeployWidth: 1,
 		NewCards: []CardKind{
@@ -118,7 +118,7 @@ var LevelList = []*LevelDef{
 		// Level 3:
 		// The first level with vehicles.
 		// The player is expected to get some anti-armor.
-		Hint:   "Tanks can only move forward",
+		Hint:   "You get a 20% refund for casualties",
 		Reward: 85,
 		Tiles: [][]rune{
 			{' ', 'F', ' ', ' ', 'M', ' '},
@@ -225,7 +225,7 @@ var LevelList = []*LevelDef{
 
 	{
 		// Level 6:
-		Hint:   "TODO",
+		Hint:   "The final battle is near",
 		Reward: 100,
 		Tiles: [][]rune{
 			{'F', ' ', 'M', 'M', ' ', 'F', 'F', ' ', 'F', 'F'},
@@ -258,36 +258,35 @@ var LevelList = []*LevelDef{
 	},
 
 	{
-		// Level 6:
-		Hint:   "TODO",
+		// Level 7:
+		Hint:   "Turn their strength into weakness",
 		Reward: 100,
 		Tiles: [][]rune{
-			{' ', ' ', 'M', 'M', ' ', 'F', 'F', ' ', 'F', 'F'},
-			{' ', ' ', ' ', ' ', 'M', 'F', 'F', ' ', ' ', 'F'},
-			{' ', 'F', ' ', 'M', ' ', 'M', ' ', ' ', ' ', ' '},
-			{' ', 'F', ' ', 'M', 'F', ' ', 'M', ' ', 'F', ' '},
-			{' ', 'F', 'M', ' ', 'F', ' ', ' ', 'M', 'F', ' '},
+			{' ', ' ', 'M', 'F', 'F', 'M', 'F', ' ', 'F'},
+			{' ', ' ', 'M', ' ', ' ', 'F', 'F', 'F', 'F'},
+			{'F', 'M', ' ', 'F', ' ', 'F', ' ', 'F', ' '},
 		},
 		EnemyDeploy: [][]rune{
-			{' ', ' ', 'M', 'M', ' ', 'F', 'F', ' ', 'F', 'i'},
-			{' ', ' ', ' ', ' ', 'M', 'F', 'F', ' ', ' ', 'i'},
-			{' ', 'F', ' ', 'M', ' ', 'M', ' ', ' ', ' ', 'v'},
-			{' ', 'F', ' ', 'M', 'F', ' ', 'M', ' ', 'F', ' '},
-			{' ', 'F', 'M', ' ', 'F', ' ', ' ', 'M', 'F', ' '},
+			{' ', ' ', 'M', 'F', 'F', 'M', 'F', 'v', 'F'},
+			{' ', ' ', 'M', ' ', ' ', 'F', 'F', 'v', 'i'},
+			{'F', 'M', ' ', 'F', ' ', 'F', ' ', ' ', 'i'},
 		},
-		EnemyTroops: []rune{'T', 'M', 'M', 'M', 'M', 'L'},
+		EnemyTroops: []rune{
+			'H', 'H', 'H', 'H', 'H',
+			'L', 'L', 'L', 'L', 'L',
+			'R', 'R', 'R', 'R', 'R',
+			'R', 'R', 'R', 'R', 'R',
+		},
 		CardPicks:   5,
-		DeployWidth: 3,
-		NewCards: []CardKind{
-			CardIonStorm,
-		},
-		NewUnits: []UnitKind{},
+		DeployWidth: 2,
+		NewCards:    []CardKind{},
+		NewUnits:    []UnitKind{},
 		EnemyCards: []CardKind{
-			CardLuckyShot,
-			CardStandGround,
+			CardInfantryCharge,
 			CardStandGround,
 			CardTakeCover,
-			CardSuppressiveFire,
+			CardTakeCover,
+			CardInfantryCharge,
 		},
 	},
 }

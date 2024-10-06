@@ -26,6 +26,8 @@ type GlobalContext struct {
 	Rand gmath.Rand
 
 	UI *eui.Builder
+
+	NewMainMenuController func() gscene.Controller
 }
 
 func (ctx *GlobalContext) NewSprite(id resource.ImageID) *graphics.Sprite {

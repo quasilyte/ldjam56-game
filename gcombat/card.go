@@ -117,6 +117,6 @@ var cardInfoTable = [...]CardInfo{
 	CardIonStorm: {
 		Name:     "Ion Storm",
 		Category: CardCategoryModifier,
-		Duration: 1,
+		Duration: 2,
 	},
 }

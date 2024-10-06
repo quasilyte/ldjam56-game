@@ -1,8 +1,6 @@
 package groundscape
 
 import (
-	"fmt"
-
 	"github.com/ebitenui/ebitenui/widget"
 	"github.com/quasilyte/gscene"
 	"github.com/quasilyte/ldjam56-game/assets"
@@ -10,6 +8,7 @@ import (
 	"github.com/quasilyte/ldjam56-game/game"
 	"github.com/quasilyte/ldjam56-game/gcombat"
 	"github.com/quasilyte/ldjam56-game/gsim"
+	"github.com/quasilyte/ldjam56-game/scenes/credits"
 	"github.com/quasilyte/ldjam56-game/scenes/sceneutil"
 	"github.com/quasilyte/ldjam56-game/scenes/unitshop"
 )
@@ -150,10 +149,13 @@ func (c *Controller) initUI() {
 			if c.victory {
 				game.G.State.Casualties += c.stage.Teams[0].Casualties
 				game.G.State.Level++
+				if game.G.State.Level >= len(gcombat.LevelList) {
+					game.G.SceneManager.ChangeScene(credits.NewController())
+					return
+				}
 				game.G.State.EnterLevel()
 				game.G.State.Credits += c.stage.Level.Reward
 				game.G.State.Credits += c.stage.Teams[0].CasualtyRefunds
-				fmt.Println("refunds:", c.stage.Teams[0].CasualtyRefunds)
 				survivors := game.G.State.Units[:0]
 				for _, u := range c.stage.Teams[0].Units {
 					if u.HP > 0 {

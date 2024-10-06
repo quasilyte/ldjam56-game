@@ -27,6 +27,9 @@ func main() {
 	game.G.Loader.OpenAssetFunc = assets.MakeOpenAssetFunc()
 	game.G.Rand.SetSeed(time.Now().UnixNano())
 	game.G.Audio.Init(audioContext, game.G.Loader)
+	game.G.NewMainMenuController = func() gscene.Controller {
+		return scenes.NewMainMenuController()
+	}
 	game.G.UI = eui.NewBuilder(eui.Config{
 		Loader: game.G.Loader,
 		Audio:  &game.G.Audio,

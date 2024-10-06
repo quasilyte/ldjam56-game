@@ -293,6 +293,9 @@ func (r *Runner) updateTakeCover(u *gcombat.Unit, delta float64) {
 				Y: float64(row*64) + 32,
 			}
 			dist := u.Pos.DistanceTo(pos)
+			if dist > 96 {
+				continue
+			}
 			if dist < minDist {
 				found = true
 				minDist = dist
@@ -416,7 +419,7 @@ func (r *Runner) maybeRunOverInfantry(u *gcombat.Unit) {
 			continue
 		}
 		dist := u2.Pos.DistanceTo(u.Pos)
-		if dist < 12 {
+		if dist <= 14 {
 			r.dealDamage(100, u, u2)
 		}
 	}
