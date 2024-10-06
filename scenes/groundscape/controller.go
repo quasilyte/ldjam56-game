@@ -1,6 +1,8 @@
 package groundscape
 
 import (
+	"fmt"
+
 	"github.com/ebitenui/ebitenui/widget"
 	"github.com/quasilyte/ebitengine-graphics/particle"
 	"github.com/quasilyte/gscene"
@@ -25,6 +27,7 @@ type Controller struct {
 
 	stage *gcombat.Stage
 
+	turn             int
 	victory          bool
 	statusLabel      *widget.Text
 	team1cards       *widget.Container
@@ -110,7 +113,7 @@ func (c *Controller) initUI() {
 	)
 
 	c.statusLabel = game.G.UI.NewText(eui.TextConfig{
-		Text: "Status: turn 1",
+		Text: "Status: phase 1",
 	})
 	rows.AddChild(c.statusLabel)
 
@@ -214,6 +217,9 @@ func (c *Controller) Update(delta float64) {
 }
 
 func (c *Controller) updateCards(cards []gcombat.Card) {
+	c.turn++
+	c.statusLabel.Label = fmt.Sprintf("Status: phase %d", c.turn)
+
 	c.team1cards.RemoveChildren()
 	c.team2cards.RemoveChildren()
 
