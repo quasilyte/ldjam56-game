@@ -8,6 +8,7 @@ type Level struct {
 
 	Tiles [][]TileKind
 
+	Reward      int
 	CardPicks   int
 	DeployWidth int
 
@@ -20,6 +21,7 @@ func LoadLevel(level *LevelDef) *Level {
 		Hint:        level.Hint,
 		EnemyCards:  level.EnemyCards,
 		DeployWidth: level.DeployWidth,
+		Reward:      level.Reward,
 	}
 
 	for _, unitTag := range level.EnemyTroops {

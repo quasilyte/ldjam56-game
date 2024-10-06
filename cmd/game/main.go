@@ -29,6 +29,7 @@ func main() {
 	game.G.UI = eui.NewBuilder(eui.Config{
 		Loader: game.G.Loader,
 	})
+	game.G.Audio.Init(audioContext, game.G.Loader)
 
 	assets.RegisterResources(game.G.Loader)
 	game.G.UI.Init()

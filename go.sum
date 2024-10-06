@@ -38,6 +38,8 @@ github.com/quasilyte/ebitengine-graphics v0.0.0-20240929192656-1fe6bf0c3cb6 h1:H
 github.com/quasilyte/ebitengine-graphics v0.0.0-20240929192656-1fe6bf0c3cb6/go.mod h1:9BFF2wqVjM0tnopbkdKwJ0iglU+P+r4+7dB1WjX8ang=
 github.com/quasilyte/ebitengine-resource v0.5.0 h1:sPncYunmgdBZVMRCZn2x2HUH3znL7m6IEczEjseTGbE=
 github.com/quasilyte/ebitengine-resource v0.5.0/go.mod h1:PEj32KsbbcgeSzAYQY5KspbImb/ucvJXoBgRMUrtBAQ=
+github.com/quasilyte/ebitengine-sound v0.0.0-20240710170318-c51faafaa539 h1:jno4V/d1Cd0ZYD5xkRT1eTRr9fRvFf/Z3+vzkhdw4ew=
+github.com/quasilyte/ebitengine-sound v0.0.0-20240710170318-c51faafaa539/go.mod h1:oRXIW+oqKvloMdqLCDs2zuwOaeZgqvT1G8GPIOohYNE=
 github.com/quasilyte/gmath v0.0.0-20240920163431-a42365a2073c h1:pOCmiE1lP24KHakAYnCw5iQ8W/FOcEMwWPW9R7EMNDk=
 github.com/quasilyte/gmath v0.0.0-20240920163431-a42365a2073c/go.mod h1:EbI+KMbALSVE2s0YFOQpR4uj66zBh9ter5P4CBMSuvA=
 github.com/quasilyte/gscene v0.0.0-20240611100302-1351fbba9610 h1:+IjgBa7jf17Spi74iwBcyXcGO6U7eOHR57eYvzbw9z8=

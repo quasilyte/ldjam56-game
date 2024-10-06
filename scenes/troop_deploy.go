@@ -75,7 +75,7 @@ func (c *troopDeployController) Init(ctx gscene.InitContext) {
 				},
 			})
 			terrain := stage.Level.Tiles[row][col]
-			btn.GetWidget().Disabled = col > stage.Level.DeployWidth ||
+			btn.GetWidget().Disabled = col >= stage.Level.DeployWidth ||
 				terrain == gcombat.TileMountains
 			if !btn.GetWidget().Disabled {
 				c.tileButtons = append(c.tileButtons, btn)
@@ -112,6 +112,7 @@ func (c *troopDeployController) Init(ctx gscene.InitContext) {
 		OnClick: func() {
 			game.G.SceneManager.ChangeScene(groundscape.NewController(groundscape.ControllerConfig{
 				Stage: game.G.State.CurrentStage,
+				Back:  NewLobbyController(),
 			}))
 		},
 	})

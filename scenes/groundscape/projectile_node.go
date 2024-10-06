@@ -4,6 +4,7 @@ import (
 	graphics "github.com/quasilyte/ebitengine-graphics"
 	"github.com/quasilyte/gscene"
 	"github.com/quasilyte/gsignal"
+	"github.com/quasilyte/ldjam56-game/assets"
 	"github.com/quasilyte/ldjam56-game/game"
 	"github.com/quasilyte/ldjam56-game/gcombat"
 	"github.com/quasilyte/ldjam56-game/scenes/sceneutil"
@@ -32,6 +33,10 @@ func (u *projectileNode) Init(scene *gscene.Scene) {
 	u.sprite.Pos.Base = &u.data.Pos
 	u.sprite.Rotation = &u.data.Rotation
 	scene.AddGraphics(u.sprite, 0)
+
+	if sfx := u.data.Attacker.Stats.FireSound; sfx != assets.AudioNone {
+		game.G.PlaySound(sfx)
+	}
 
 	u.data.EventDisposed.Connect(nil, func(gsignal.Void) {
 		u.Dispose()

@@ -4,6 +4,7 @@ import (
 	graphics "github.com/quasilyte/ebitengine-graphics"
 	"github.com/quasilyte/gscene"
 	"github.com/quasilyte/gsignal"
+	"github.com/quasilyte/ldjam56-game/assets"
 	"github.com/quasilyte/ldjam56-game/game"
 	"github.com/quasilyte/ldjam56-game/gcombat"
 	"github.com/quasilyte/ldjam56-game/scenes/sceneutil"
@@ -32,6 +33,7 @@ func (u *unitNode) Init(scene *gscene.Scene) {
 	scene.AddGraphics(u.sprite, 0)
 
 	u.data.EventDisposed.Connect(nil, func(gsignal.Void) {
+		game.G.PlaySound(assets.AudioUnitDestroyed)
 		u.Dispose()
 	})
 }

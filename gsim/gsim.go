@@ -15,6 +15,9 @@ type Runner struct {
 	allUnits    []*gcombat.Unit
 	projectiles []*gcombat.Projectile
 
+	finished bool
+
+	EventFinished          gsignal.Event[*gcombat.Team]
 	EventProjectileCreated gsignal.Event[*gcombat.Projectile]
 }
 
@@ -24,7 +27,10 @@ func NewRunner(stage *gcombat.Stage) *Runner {
 	}
 
 	for _, team := range stage.Teams {
-		r.allUnits = append(r.allUnits, team.Units...)
+		for _, u := range team.Units {
+			u.Reload = u.Stats.Reload * game.G.Rand.FloatRange(0.5, 1.25)
+			r.allUnits = append(r.allUnits, u)
+		}
 	}
 	gmath.Shuffle(&game.G.Rand, r.allUnits)
 
@@ -32,6 +38,10 @@ func NewRunner(stage *gcombat.Stage) *Runner {
 }
 
 func (r *Runner) Update(delta float64) {
+	if r.finished {
+		return
+	}
+
 	// TODO: advance cards when a time threshold is reached.
 	r.stage.Time += delta
 
@@ -46,15 +56,29 @@ func (r *Runner) Update(delta float64) {
 		r.projectiles = live
 	}
 
+	unitsByTeam := [2]int{}
 	live := r.allUnits[:0]
 	for _, u := range r.allUnits {
 		if u.IsDisposed() {
+			u.Team.Casualties++
 			u.EventDisposed.Emit(gsignal.Void{})
 			continue
 		}
+		unitsByTeam[u.Team.Index]++
 		live = append(live, u)
 	}
 	r.allUnits = live
+
+	if unitsByTeam[0] == 0 {
+		r.finished = true
+		r.EventFinished.Emit(r.stage.Teams[1])
+		return
+	}
+	if unitsByTeam[1] == 0 {
+		r.finished = true
+		r.EventFinished.Emit(r.stage.Teams[0])
+		return
+	}
 
 	gmath.RandIterate(&game.G.Rand, r.allUnits, func(u *gcombat.Unit) bool {
 		r.updateUnit(u, delta)
@@ -132,19 +156,35 @@ func (r *Runner) updateUnit(u *gcombat.Unit, delta float64) {
 }
 
 func (r *Runner) updateRifleUnit(u *gcombat.Unit, delta float64) {
-	threshold := (r.stage.Width - float64(r.stage.Level.DeployWidth*64)) - 64
-	if u.Pos.X >= threshold {
-		return
+	var desiredPos gmath.Vec
+	if u.Team.Index == 0 {
+		threshold := (r.stage.Width - float64(r.stage.Level.DeployWidth*64)) - 64
+		if u.Pos.X >= threshold {
+			return
+		}
+		desiredPos = gmath.Vec{
+			Y: u.SpawnPos.Y + game.G.Rand.FloatRange(-14, 14),
+			X: u.Pos.X + 64 + game.G.Rand.FloatRange(-14, 14),
+		}
+	} else {
+		threshold := float64(r.stage.Level.DeployWidth*64) + 64
+		if u.Pos.X <= threshold {
+			return
+		}
+		desiredPos = gmath.Vec{
+			Y: u.SpawnPos.Y + game.G.Rand.FloatRange(-14, 14),
+			X: u.Pos.X - 64 + game.G.Rand.FloatRange(-14, 14),
+		}
 	}
-	desiredPos := gmath.Vec{
-		Y: u.SpawnPos.Y + game.G.Rand.FloatRange(-14, 14),
-		X: u.Pos.X + 64 + game.G.Rand.FloatRange(-14, 14),
-	}
+
 	u.Waypoint = u.Pos.MoveTowards(desiredPos, 64)
 }
 
 func (r *Runner) maybeOpenFire(u *gcombat.Unit) {
-	u.Reload = u.Stats.Reload * game.G.Rand.FloatRange(0.8, 1.2)
+	u.Reload = u.Stats.Reload * game.G.Rand.FloatRange(0.7, 1.5)
+	if game.G.Rand.Chance(0.1) && u.Reload < 1.25 {
+		u.Reload *= 0.5
+	}
 
 	var target *gcombat.Unit
 	{

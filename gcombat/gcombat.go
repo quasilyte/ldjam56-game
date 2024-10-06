@@ -76,6 +76,8 @@ type Team struct {
 
 	Units []*Unit
 
+	Casualties int
+
 	Cards []Card
 }
 
@@ -111,8 +113,11 @@ func NewUnit(k UnitKind) *Unit {
 type UnitStats struct {
 	Kind UnitKind
 
+	Cost int
+
 	Image           resource.ImageID
 	ProjectileImage resource.ImageID
+	FireSound       resource.AudioID
 
 	ProjectileHitRadius float64
 	Damage              float64
@@ -132,9 +137,11 @@ type UnitStats struct {
 
 var unitStatsTable = [...]UnitStats{
 	UnitRifle: {
+		Kind:            UnitRifle,
+		Cost:            10,
 		Image:           assets.ImageUnitRifle,
 		ProjectileImage: assets.ImageProjectileRifle,
-		Kind:            UnitRifle,
+		FireSound:       assets.AudioRifle1,
 		MaxHP:           10,
 		Speed:           18,
 		TerrainSpeed: [NumTileKinds]float64{
@@ -149,16 +156,18 @@ var unitStatsTable = [...]UnitStats{
 		},
 		ProjectileHitRadius: 6,
 		Damage:              2,
-		Reload:              0.4,
+		Reload:              0.8,
 		AccuracyDist:        64 * 3,
 		BaseAccuracy:        0.4,
 		Infantry:            true,
 	},
 
 	UnitLaser: {
+		Kind:            UnitLaser,
+		Cost:            15,
 		Image:           assets.ImageUnitLaser,
 		ProjectileImage: assets.ImageProjectileLaser,
-		Kind:            UnitLaser,
+		FireSound:       assets.AudioLaser1,
 		MaxHP:           12,
 		Speed:           12,
 		TerrainSpeed: [NumTileKinds]float64{
@@ -172,8 +181,8 @@ var unitStatsTable = [...]UnitStats{
 			TileMountains: -0.2,
 		},
 		ProjectileHitRadius: 8,
-		Damage:              3,
-		Reload:              1.0,
+		Damage:              4,
+		Reload:              2.0,
 		AccuracyDist:        64 * 5,
 		BaseAccuracy:        0.6,
 		Infantry:            true,

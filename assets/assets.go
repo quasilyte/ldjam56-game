@@ -22,4 +22,5 @@ func MakeOpenAssetFunc() func(path string) io.ReadCloser {
 
 func RegisterResources(loader *resource.Loader) {
 	registerImageResources(loader)
+	registerAudioResources(loader)
 }
