@@ -33,6 +33,16 @@ func (u *unitNode) Init(scene *gscene.Scene) {
 	scene.AddGraphics(u.sprite, 0)
 
 	u.data.EventDisposed.Connect(nil, func(gsignal.Void) {
+		if !u.data.Stats.Infantry {
+			num := game.G.Rand.IntRange(4, 6)
+			for i := 0; i < num; i++ {
+				effect := newEffectNode(effectNodeConfig{
+					Sprite: game.G.NewSprite(assets.ImageExplosion),
+					Pos:    u.sprite.Pos.Resolve().Add(game.G.Rand.Offset(-8, 8)),
+				})
+				scene.AddObject(effect)
+			}
+		}
 		game.G.PlaySound(assets.AudioUnitDestroyed)
 		u.Dispose()
 	})
