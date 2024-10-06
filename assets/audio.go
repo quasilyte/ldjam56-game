@@ -33,9 +33,9 @@ func registerAudioResources(loader *resource.Loader) {
 		AudioHunter2: {Path: "audio/hunter2.wav", Volume: -0.3},
 		AudioHunter3: {Path: "audio/hunter3.wav", Volume: -0.3},
 
-		AudioTank1: {Path: "audio/tank1.wav", Volume: -0.6},
-		AudioTank2: {Path: "audio/tank2.wav", Volume: -0.6},
-		AudioTank3: {Path: "audio/tank3.wav", Volume: -0.6},
+		AudioTank1: {Path: "audio/tank1.wav", Volume: -0.85},
+		AudioTank2: {Path: "audio/tank2.wav", Volume: -0.85},
+		AudioTank3: {Path: "audio/tank3.wav", Volume: -0.85},
 	}
 
 	for id, res := range audioResources {
