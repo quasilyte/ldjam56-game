@@ -58,7 +58,7 @@ var LevelList = []*LevelDef{
 			{'F', 'F', 'F', 'F', ' ', 'i'},
 			{' ', 'M', 'M', 'F', ' ', 'i'},
 		},
-		EnemyTroops: []rune{'L', 'L', 'L', 'L'},
+		EnemyTroops: []rune{'L', 'L', 'L', 'L', 'L'},
 		// EnemyTroops: []rune{'M', 'M'},
 		CardPicks:   2,
 		DeployWidth: 1,
@@ -154,7 +154,7 @@ var LevelList = []*LevelDef{
 	{
 		// Level 4:
 		Hint:   "Infantry can't survive the treads of a tank",
-		Reward: 95,
+		Reward: 100,
 		Tiles: [][]rune{
 			{' ', ' ', 'F', 'F', ' ', ' ', ' ', ' '},
 			{' ', ' ', ' ', 'F', ' ', ' ', ' ', ' '},
@@ -189,7 +189,7 @@ var LevelList = []*LevelDef{
 	{
 		// Level 5:
 		Hint:   "Missiles and tanks deal splash damage",
-		Reward: 75,
+		Reward: 80,
 		Tiles: [][]rune{
 			{' ', ' ', 'F', ' ', 'F', 'F'},
 			{' ', 'F', 'M', ' ', 'F', 'M'},
@@ -229,14 +229,14 @@ var LevelList = []*LevelDef{
 		Reward: 100,
 		Tiles: [][]rune{
 			{'F', ' ', 'M', 'M', ' ', 'F', 'F', ' ', 'F', 'F'},
-			{' ', ' ', ' ', ' ', 'M', 'F', 'F', ' ', ' ', 'F'},
+			{' ', ' ', ' ', ' ', 'M', 'M', 'F', ' ', ' ', 'F'},
 			{' ', 'F', ' ', 'M', ' ', 'M', ' ', ' ', ' ', ' '},
 			{' ', 'F', ' ', 'M', 'F', ' ', 'M', ' ', 'F', ' '},
 			{' ', 'F', 'M', ' ', 'F', ' ', ' ', 'M', 'F', ' '},
 		},
 		EnemyDeploy: [][]rune{
 			{' ', ' ', 'M', 'M', ' ', 'F', 'F', ' ', 'F', 'i'},
-			{' ', ' ', ' ', ' ', 'M', 'F', 'F', ' ', ' ', 'i'},
+			{' ', ' ', ' ', ' ', 'M', 'M', 'F', ' ', ' ', 'i'},
 			{' ', 'F', ' ', 'M', ' ', 'M', ' ', ' ', ' ', 'v'},
 			{' ', 'F', ' ', 'M', 'F', ' ', 'M', ' ', 'F', ' '},
 			{' ', 'F', 'M', ' ', 'F', ' ', ' ', 'M', 'F', ' '},

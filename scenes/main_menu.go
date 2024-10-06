@@ -44,6 +44,7 @@ func (c *mainMenuController) Init(ctx gscene.InitContext) {
 					gcombat.UnitRifle,
 					gcombat.UnitRifle,
 					gcombat.UnitRifle,
+					gcombat.UnitLaser,
 				},
 				UnitsUnlocked: [gcombat.NumUnitKinds]bool{
 					gcombat.UnitRifle: true,

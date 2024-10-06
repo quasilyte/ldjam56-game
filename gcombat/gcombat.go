@@ -255,7 +255,7 @@ var unitStatsTable = [...]UnitStats{
 		ProjectileImage: assets.ImageProjectileLaser,
 		FireSound:       assets.AudioHunter1,
 		MaxHP:           40,
-		Speed:           20,
+		Speed:           22,
 		TerrainSpeed: [NumTileKinds]float64{
 			TilePlains:    1.0,
 			TileForest:    0.8,

@@ -1,10 +1,12 @@
 package main
 
 import (
+	"fmt"
 	"time"
 
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/hajimehoshi/ebiten/v2/audio"
+	graphics "github.com/quasilyte/ebitengine-graphics"
 	resource "github.com/quasilyte/ebitengine-resource"
 	"github.com/quasilyte/gmath"
 	"github.com/quasilyte/gscene"
@@ -13,6 +15,7 @@ import (
 	"github.com/quasilyte/ldjam56-game/game"
 	"github.com/quasilyte/ldjam56-game/scenes"
 	"github.com/quasilyte/ldjam56-game/scenes/groundscape"
+	"github.com/quasilyte/ldjam56-game/styles"
 )
 
 func main() {
@@ -38,6 +41,7 @@ func main() {
 		Audio:  &game.G.Audio,
 	})
 	groundscape.InitParticleTemplates()
+	fmt.Println(graphics.FormatRGB(styles.ColorBackground.Color()))
 
 	assets.RegisterResources(game.G.Loader)
 	game.G.UI.Init()
