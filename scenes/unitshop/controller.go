@@ -87,9 +87,10 @@ func (c *Controller) Init(ctx gscene.InitContext) {
 				Text: k.String(),
 				OnClick: func() {
 					cost := c.unitCost(k)
-					costLabel.Label = styles.Normal(strconv.Itoa(cost)) + "$"
 					game.G.State.Credits -= cost
 					game.G.State.Units = append(game.G.State.Units, k)
+					nextCost := c.unitCost(k)
+					costLabel.Label = styles.Normal(strconv.Itoa(nextCost)) + "$"
 					c.updateCreditsCounter()
 					for _, b := range c.buttons {
 						cost2 := c.unitCost(b.unit)
