@@ -9,6 +9,7 @@ import (
 	"github.com/ebitenui/ebitenui/widget"
 	"github.com/hajimehoshi/ebiten/v2"
 	resource "github.com/quasilyte/ebitengine-resource"
+	sound "github.com/quasilyte/ebitengine-sound"
 	"github.com/quasilyte/gscene"
 	"github.com/quasilyte/ldjam56-game/assets"
 	"github.com/quasilyte/ldjam56-game/styles"
@@ -25,6 +26,8 @@ type Builder struct {
 	currentObject *SceneObject
 
 	loader *resource.Loader
+
+	audio *sound.System
 }
 
 type buttonDefaults struct {
@@ -40,11 +43,14 @@ type panelDefaults struct {
 
 type Config struct {
 	Loader *resource.Loader
+
+	Audio *sound.System
 }
 
 func NewBuilder(config Config) *Builder {
 	b := &Builder{
 		loader: config.Loader,
+		audio:  config.Audio,
 	}
 	return b
 }
@@ -149,11 +155,12 @@ func (b *Builder) NewButton(config ButtonConfig) *widget.Button {
 		options = append(options, widget.ButtonOpts.TextProcessBBCode(true))
 	}
 
-	if config.OnClick != nil {
-		options = append(options, widget.ButtonOpts.ClickedHandler(func(args *widget.ButtonClickedEventArgs) {
+	options = append(options, widget.ButtonOpts.ClickedHandler(func(args *widget.ButtonClickedEventArgs) {
+		b.audio.PlaySound(assets.AudioButtonClick)
+		if config.OnClick != nil {
 			config.OnClick()
-		}))
-	}
+		}
+	}))
 
 	if config.MinWidth != 0 || config.MinHeight != 0 {
 		options = append(options, widget.ButtonOpts.WidgetOpts(widget.WidgetOpts.MinSize(config.MinWidth, config.MinHeight)))
@@ -179,11 +186,12 @@ func (b *Builder) NewTileButton(config TileButtonConfig) *widget.Button {
 		widget.ButtonOpts.Image(defaults.image),
 	}
 
-	if config.OnClick != nil {
-		options = append(options, widget.ButtonOpts.ClickedHandler(func(args *widget.ButtonClickedEventArgs) {
+	options = append(options, widget.ButtonOpts.ClickedHandler(func(args *widget.ButtonClickedEventArgs) {
+		b.audio.PlaySound(assets.AudioButtonClickSoft)
+		if config.OnClick != nil {
 			config.OnClick()
-		}))
-	}
+		}
+	}))
 	if config.Text != "" {
 		options = append(options,
 			widget.ButtonOpts.Text(config.Text, assets.FontTiny, b.button.textColors),

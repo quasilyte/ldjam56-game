@@ -77,6 +77,7 @@ func (r *Runner) Update(delta float64) {
 	for _, u := range r.allUnits {
 		if u.IsDisposed() {
 			u.Team.Casualties++
+			u.Team.CasualtyRefunds += gmath.Iround(float64(u.Stats.Cost) * 0.2)
 			u.EventDisposed.Emit(gsignal.Void{})
 			continue
 		}
@@ -117,22 +118,47 @@ func (r *Runner) updatePhase() {
 
 	if r.phase < len(r.stage.Teams[0].Cards) {
 		c := r.stage.Teams[0].Cards[r.phase]
-		r.activeCards = append(r.activeCards, &activeCard{
+		ac := activeCard{
 			data:       c,
 			phasesLeft: c.Kind.Info().Duration,
-		})
+		}
+		r.activeCards = append(r.activeCards, &ac)
+		if ac.data.Kind.Info().Category == gcombat.CardCategoryModifier {
+			ac2 := ac
+			ac2.data.TeamIndex = r.stage.Teams[ac.data.TeamIndex].EnemyIndex()
+			r.activeCards = append(r.activeCards, &ac2)
+		}
 	}
 	if r.phase < len(r.stage.Teams[1].Cards) {
 		c := r.stage.Teams[1].Cards[r.phase]
-		r.activeCards = append(r.activeCards, &activeCard{
+		ac := activeCard{
 			data:       c,
 			phasesLeft: c.Kind.Info().Duration,
-		})
+		}
+		r.activeCards = append(r.activeCards, &ac)
+		if ac.data.Kind.Info().Category == gcombat.CardCategoryModifier {
+			ac2 := ac
+			ac2.data.TeamIndex = r.stage.Teams[ac.data.TeamIndex].EnemyIndex()
+			r.activeCards = append(r.activeCards, &ac2)
+		}
 	}
 
 	{
 		r.cardsSlice = r.cardsSlice[:0]
 		for _, c := range r.activeCards {
+			if c.data.Kind == gcombat.CardFirstAid {
+				for _, u := range r.allUnits {
+					if u.Team.Index != c.data.TeamIndex {
+						continue
+					}
+					if !u.Stats.Infantry {
+						continue
+					}
+					if u.HP < u.Stats.MaxHP {
+						u.HP += (u.Stats.MaxHP - u.HP) * 0.75
+					}
+				}
+			}
 			r.cardsSlice = append(r.cardsSlice, c.data)
 		}
 		r.EventUpdateCards.Emit(r.cardsSlice)
@@ -154,7 +180,24 @@ func (r *Runner) updateProjectile(p *gcombat.Projectile, delta float64) {
 	}
 }
 
+func (r *Runner) dealSplashDamage(p *gcombat.Projectile) {
+	for _, u := range r.allUnits {
+		if u == p.Target {
+			continue
+		}
+		dist := u.Pos.DistanceTo(p.Pos)
+		if dist > 12 {
+			continue
+		}
+		r.dealDamage(p.Attacker.Stats.Damage*0.75, p.Attacker, u)
+	}
+}
+
 func (r *Runner) detonateProjectile(p *gcombat.Projectile) {
+	if p.Attacker.Stats.SplashDamage {
+		r.dealSplashDamage(p)
+	}
+
 	if p.Target.IsDisposed() {
 		return
 	}
@@ -167,10 +210,20 @@ func (r *Runner) detonateProjectile(p *gcombat.Projectile) {
 		return
 	}
 
-	damage := p.Attacker.Stats.Damage * game.G.Rand.FloatRange(0.8, 1.2)
-	def := r.unitDefense(p.Target)
+	r.dealDamage(p.Attacker.Stats.Damage, p.Attacker, p.Target)
+}
+
+func (r *Runner) dealDamage(value float64, attacker, target *gcombat.Unit) {
+	damage := value * game.G.Rand.FloatRange(0.8, 1.2)
+	def := r.unitDefense(target)
+	if def > 0 && target.Stats.Infantry && r.cardIsActive(target.Team.Index, gcombat.CardBadCover) {
+		def *= 0.25
+	}
 	damage *= 1 - def
-	p.Target.HP = gmath.ClampMin(p.Target.HP-damage, 0)
+	if !target.Stats.Infantry {
+		damage *= attacker.Stats.AntiArmorDamage
+	}
+	target.HP = gmath.ClampMin(target.HP-damage, 0)
 }
 
 func (r *Runner) unitDefense(u *gcombat.Unit) float64 {
@@ -186,7 +239,7 @@ func (r *Runner) unitSpeed(u *gcombat.Unit) float64 {
 	tile := r.stage.Level.Tiles[cy][cx]
 	multiplier := u.Stats.TerrainSpeed[tile]
 	if u.Stats.Infantry {
-		if r.cardIsActive(u.Team.Index, gcombat.CardInfatryCharge) {
+		if r.cardIsActive(u.Team.Index, gcombat.CardInfantryCharge) {
 			multiplier *= 1.33
 		}
 	}
@@ -202,6 +255,9 @@ func (r *Runner) updateUnit(u *gcombat.Unit, delta float64) {
 	if !u.Waypoint.IsZero() {
 		dist := r.unitSpeed(u) * delta
 		u.Pos = u.Pos.MoveTowards(u.Waypoint, dist)
+		if u.Stats.Kind == gcombat.UnitTank {
+			r.maybeRunOverInfantry(u)
+		}
 		if u.Pos == u.Waypoint {
 			u.Waypoint = gmath.Vec{}
 			return
@@ -214,6 +270,12 @@ func (r *Runner) updateUnit(u *gcombat.Unit, delta float64) {
 		r.updateRifleUnit(u, delta)
 	case gcombat.UnitLaser:
 		r.updateLaserUnit(u, delta)
+	case gcombat.UnitMissile:
+		r.updateMissileUnit(u, delta)
+	case gcombat.UnitHunter:
+		r.updateHunterUnit(u, delta)
+	case gcombat.UnitTank:
+		r.updateTankUnit(u, delta)
 	}
 }
 
@@ -245,11 +307,69 @@ func (r *Runner) updateTakeCover(u *gcombat.Unit, delta float64) {
 	u.Waypoint = u.Pos.MoveTowards(desiredPos, 64)
 }
 
+func (r *Runner) updateHunterUnit(u *gcombat.Unit, delta float64) {
+	if r.cardIsActive(u.Team.Index, gcombat.CardTakeCover) {
+		r.updateTakeCover(u, delta)
+		return
+	}
+
+	if r.cardIsActive(u.Team.Index, gcombat.CardStandGround) {
+		cx := int(u.Pos.X) / 64
+		cy := int(u.Pos.Y) / 64
+		u.Waypoint = gmath.Vec{
+			X: (float64(cx*64) + 32) + game.G.Rand.FloatRange(-14.0, 14.0),
+			Y: (float64(cy*64) + 32) + game.G.Rand.FloatRange(-14.0, 14.0),
+		}
+		return
+	}
+
+	u.Waypoint = r.rushWaypoint(u, u.Team.Index != 0, 160)
+}
+
+func (r *Runner) updateTankUnit(u *gcombat.Unit, delta float64) {
+	if r.cardIsActive(u.Team.Index, gcombat.CardTankRush) {
+		u.Waypoint = r.rushWaypoint(u, u.Team.Index != 0, 64)
+		return
+	}
+}
+
 func (r *Runner) updateLaserUnit(u *gcombat.Unit, delta float64) {
 	if r.cardIsActive(u.Team.Index, gcombat.CardTakeCover) {
 		r.updateTakeCover(u, delta)
 		return
 	}
+}
+
+func (r *Runner) updateMissileUnit(u *gcombat.Unit, delta float64) {
+	if r.cardIsActive(u.Team.Index, gcombat.CardTakeCover) {
+		r.updateTakeCover(u, delta)
+		return
+	}
+}
+
+func (r *Runner) rushWaypoint(u *gcombat.Unit, inverse bool, thresholdConstant float64) gmath.Vec {
+	var desiredPos gmath.Vec
+	if inverse {
+		threshold := float64(r.stage.Level.DeployWidth*64) + thresholdConstant
+		if u.Pos.X <= threshold {
+			return gmath.Vec{}
+		}
+		desiredPos = gmath.Vec{
+			Y: u.SpawnPos.Y + game.G.Rand.FloatRange(-14, 14),
+			X: u.Pos.X - 64 + game.G.Rand.FloatRange(-14, 14),
+		}
+	} else {
+		threshold := (r.stage.Width - float64(r.stage.Level.DeployWidth*64)) - thresholdConstant
+		if u.Pos.X >= threshold {
+			return gmath.Vec{}
+		}
+		desiredPos = gmath.Vec{
+			Y: u.SpawnPos.Y + game.G.Rand.FloatRange(-14, 14),
+			X: u.Pos.X + 64 + game.G.Rand.FloatRange(-14, 14),
+		}
+	}
+
+	return u.Pos.MoveTowards(desiredPos, 64)
 }
 
 func (r *Runner) updateRifleUnit(u *gcombat.Unit, delta float64) {
@@ -258,35 +378,24 @@ func (r *Runner) updateRifleUnit(u *gcombat.Unit, delta float64) {
 		return
 	}
 
-	effectiveIndex := u.Team.Index
+	if r.cardIsActive(u.Team.Index, gcombat.CardStandGround) {
+		cx := int(u.Pos.X) / 64
+		cy := int(u.Pos.Y) / 64
+		u.Waypoint = gmath.Vec{
+			X: (float64(cx*64) + 32) + game.G.Rand.FloatRange(-14.0, 14.0),
+			Y: (float64(cy*64) + 32) + game.G.Rand.FloatRange(-14.0, 14.0),
+		}
+		return
+	}
+
+	inverse := u.Team.Index != 0
 	if r.cardIsActive(u.Team.EnemyIndex(), gcombat.CardSuppressiveFire) {
-		if !r.cardIsActive(u.Team.Index, gcombat.CardInfatryCharge) {
-			effectiveIndex = u.Team.EnemyIndex()
+		if !r.cardIsActive(u.Team.Index, gcombat.CardInfantryCharge) {
+			inverse = !inverse
 		}
 	}
 
-	var desiredPos gmath.Vec
-	if effectiveIndex == 0 {
-		threshold := (r.stage.Width - float64(r.stage.Level.DeployWidth*64)) - 64
-		if u.Pos.X >= threshold {
-			return
-		}
-		desiredPos = gmath.Vec{
-			Y: u.SpawnPos.Y + game.G.Rand.FloatRange(-14, 14),
-			X: u.Pos.X + 64 + game.G.Rand.FloatRange(-14, 14),
-		}
-	} else {
-		threshold := float64(r.stage.Level.DeployWidth*64) + 64
-		if u.Pos.X <= threshold {
-			return
-		}
-		desiredPos = gmath.Vec{
-			Y: u.SpawnPos.Y + game.G.Rand.FloatRange(-14, 14),
-			X: u.Pos.X - 64 + game.G.Rand.FloatRange(-14, 14),
-		}
-	}
-
-	u.Waypoint = u.Pos.MoveTowards(desiredPos, 64)
+	u.Waypoint = r.rushWaypoint(u, inverse, 64)
 }
 
 func (r *Runner) cardIsActive(teamIndex int, k gcombat.CardKind) bool {
@@ -298,24 +407,58 @@ func (r *Runner) cardIsActive(teamIndex int, k gcombat.CardKind) bool {
 	return false
 }
 
+func (r *Runner) maybeRunOverInfantry(u *gcombat.Unit) {
+	for _, u2 := range r.allUnits {
+		if u2.Team == u.Team {
+			continue
+		}
+		if !u2.Stats.Infantry {
+			continue
+		}
+		dist := u2.Pos.DistanceTo(u.Pos)
+		if dist < 12 {
+			r.dealDamage(100, u, u2)
+		}
+	}
+}
+
 func (r *Runner) maybeOpenFire(u *gcombat.Unit) {
 	u.Reload = u.Stats.Reload * game.G.Rand.FloatRange(0.7, 1.5)
 	if game.G.Rand.Chance(0.1) && u.Reload < 1.25 {
 		u.Reload *= 0.5
 	}
-	if u.Stats.Infantry && r.cardIsActive(u.Team.Index, gcombat.CardSuppressiveFire) {
+	if u.Stats.SuppressiveROF && r.cardIsActive(u.Team.Index, gcombat.CardSuppressiveFire) {
 		u.Reload *= game.G.Rand.FloatRange(0.2, 0.4)
 	}
+	if u.Stats.IonStorm && r.cardIsActive(u.Team.Index, gcombat.CardIonStorm) {
+		return
+	}
 
+	aimedDist := u.Stats.AccuracyDist
 	var target *gcombat.Unit
+	focused := false
 	{
 		bestScore := 0.0
-		for _, u2 := range r.allUnits {
+		focusFire := r.cardIsActive(u.Team.Index, gcombat.CardFocusFire)
+		for i, u2 := range r.allUnits {
 			if u2.Team == u.Team {
 				continue
 			}
-			score := 1000.0 - u.Pos.DistanceTo(u2.Pos)
+			dist := u.Pos.DistanceTo(u2.Pos)
+			score := 1000.0 - dist
+			if !u2.Stats.Infantry {
+				score *= 0.5 + (u.Stats.AntiArmorDamage * 0.5)
+			}
+			wasFocused := false
+			if focusFire && dist <= (1.5*u.Stats.AccuracyDist) {
+				score += float64(i * 30)
+				if u2.HP <= u2.Stats.MaxHP*0.8 {
+					wasFocused = true
+					score *= (u2.HP + u2.Stats.MaxHP*0.2) / u2.Stats.MaxHP
+				}
+			}
 			if score > bestScore {
+				focused = wasFocused
 				bestScore = score
 				target = u2
 			}
@@ -324,19 +467,25 @@ func (r *Runner) maybeOpenFire(u *gcombat.Unit) {
 	if target == nil {
 		return
 	}
+	if focused {
+		aimedDist *= 1.25
+	}
 
 	var aimPos gmath.Vec
 	goodAim := false
 	{
 		chanceToHit := u.Stats.BaseAccuracy
-		if u.Stats.Infantry && r.cardIsActive(u.Team.Index, gcombat.CardSuppressiveFire) {
+		if u.Stats.SuppressiveROF && r.cardIsActive(u.Team.Index, gcombat.CardSuppressiveFire) {
 			chanceToHit *= 0.2
 		}
 		if r.cardIsActive(u.Team.Index, gcombat.CardLuckyShot) {
 			chanceToHit *= 2.0
+			if r.cardIsActive(target.Team.Index, gcombat.CardBadCover) {
+				chanceToHit *= 2.0
+			}
 		}
 		dist := u.Pos.DistanceTo(target.Pos)
-		if dist > u.Stats.AccuracyDist {
+		if dist > aimedDist {
 			chanceToHit *= 0.25
 		}
 		if game.G.Rand.Chance(chanceToHit) {

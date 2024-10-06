@@ -6,6 +6,7 @@ import (
 
 	"github.com/ebitenui/ebitenui/widget"
 	"github.com/quasilyte/gscene"
+	"github.com/quasilyte/gslices"
 	"github.com/quasilyte/ldjam56-game/assets"
 	"github.com/quasilyte/ldjam56-game/eui"
 	"github.com/quasilyte/ldjam56-game/game"
@@ -117,6 +118,9 @@ func (c *Controller) Init(ctx gscene.InitContext) {
 		Text:     "CONTINUE",
 		MinWidth: 160,
 		OnClick: func() {
+			gslices.SortFunc(game.G.State.Units, func(u1, u2 gcombat.UnitKind) bool {
+				return u1 < u2
+			})
 			game.G.SceneManager.ChangeScene(c.back)
 		},
 	}))

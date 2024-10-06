@@ -76,7 +76,8 @@ type Team struct {
 
 	Units []*Unit
 
-	Casualties int
+	Casualties      int
+	CasualtyRefunds int
 
 	Cards []Card
 }
@@ -132,6 +133,7 @@ type UnitStats struct {
 
 	ProjectileHitRadius float64
 	Damage              float64
+	AntiArmorDamage     float64
 
 	MaxHP float64
 
@@ -145,7 +147,10 @@ type UnitStats struct {
 
 	Comment string
 
-	Infantry bool
+	IonStorm       bool
+	SplashDamage   bool
+	Infantry       bool
+	SuppressiveROF bool
 }
 
 var unitStatsTable = [...]UnitStats{
@@ -166,14 +171,18 @@ var unitStatsTable = [...]UnitStats{
 		TerrainDefense: [NumTileKinds]float64{
 			TilePlains:    0.0,
 			TileForest:    0.75,
-			TileMountains: -0.2,
+			TileMountains: -0.3,
 		},
 		ProjectileHitRadius: 6,
 		Damage:              2,
+		AntiArmorDamage:     0.5,
 		Reload:              0.8,
 		AccuracyDist:        64 * 3,
 		BaseAccuracy:        0.4,
+		IonStorm:            false,
 		Infantry:            true,
+		SuppressiveROF:      true,
+		SplashDamage:        false,
 	},
 
 	UnitLaser: {
@@ -192,15 +201,112 @@ var unitStatsTable = [...]UnitStats{
 		},
 		TerrainDefense: [NumTileKinds]float64{
 			TilePlains:    0.0,
-			TileForest:    0.55,
-			TileMountains: -0.2,
+			TileForest:    0.6,
+			TileMountains: -0.3,
 		},
 		ProjectileHitRadius: 8,
 		Damage:              4,
-		Reload:              2.0,
-		AccuracyDist:        64 * 5,
-		BaseAccuracy:        0.6,
+		AntiArmorDamage:     0.85,
+		Reload:              1.9,
+		AccuracyDist:        64 * 6,
+		BaseAccuracy:        0.65,
+		IonStorm:            true,
 		Infantry:            true,
+		SuppressiveROF:      true,
+		SplashDamage:        false,
+	},
+
+	UnitMissile: {
+		Kind:            UnitMissile,
+		Cost:            30,
+		Comment:         "Anti-vehicle trooper, good accuracy, splash",
+		Image:           assets.ImageUnitMissile,
+		ProjectileImage: assets.ImageProjectileMissile,
+		FireSound:       assets.AudioMissile1,
+		MaxHP:           12,
+		Speed:           10,
+		TerrainSpeed: [NumTileKinds]float64{
+			TilePlains:    1.0,
+			TileForest:    0.7,
+			TileMountains: 0.15,
+		},
+		TerrainDefense: [NumTileKinds]float64{
+			TilePlains:    0.0,
+			TileForest:    0.3,
+			TileMountains: -0.2,
+		},
+		ProjectileHitRadius: 10,
+		Damage:              7,
+		AntiArmorDamage:     1.5,
+		Reload:              4.0,
+		AccuracyDist:        64 * 7,
+		BaseAccuracy:        0.85,
+		IonStorm:            false,
+		Infantry:            true,
+		SuppressiveROF:      false,
+		SplashDamage:        true,
+	},
+
+	UnitHunter: {
+		Kind:            UnitHunter,
+		Cost:            45,
+		Comment:         "A laser crawler that doesn't fear mountains",
+		Image:           assets.ImageUnitHunter,
+		ProjectileImage: assets.ImageProjectileLaser,
+		FireSound:       assets.AudioHunter1,
+		MaxHP:           40,
+		Speed:           15,
+		TerrainSpeed: [NumTileKinds]float64{
+			TilePlains:    1.0,
+			TileForest:    0.8,
+			TileMountains: 0.8,
+		},
+		TerrainDefense: [NumTileKinds]float64{
+			TilePlains:    0.0,
+			TileForest:    0.45,
+			TileMountains: 0.55,
+		},
+		ProjectileHitRadius: 8,
+		Damage:              4,
+		AntiArmorDamage:     0.75,
+		Reload:              0.85,
+		AccuracyDist:        64 * 4,
+		BaseAccuracy:        0.6,
+		IonStorm:            true,
+		Infantry:            false,
+		SuppressiveROF:      true,
+		SplashDamage:        false,
+	},
+
+	UnitTank: {
+		Kind:            UnitTank,
+		Cost:            55,
+		Comment:         "Tanky, but low damage-per-second, splash",
+		Image:           assets.ImageUnitTank,
+		ProjectileImage: assets.ImageProjectileTank,
+		FireSound:       assets.AudioTank1,
+		MaxHP:           65,
+		Speed:           18,
+		TerrainSpeed: [NumTileKinds]float64{
+			TilePlains:    1.0,
+			TileForest:    0.4,
+			TileMountains: 0.05,
+		},
+		TerrainDefense: [NumTileKinds]float64{
+			TilePlains:    0.0,
+			TileForest:    -0.3,
+			TileMountains: -0.4,
+		},
+		ProjectileHitRadius: 8,
+		Damage:              10,
+		AntiArmorDamage:     1.0,
+		Reload:              3.5,
+		AccuracyDist:        64 * 5,
+		BaseAccuracy:        0.7,
+		IonStorm:            false,
+		Infantry:            false,
+		SuppressiveROF:      false,
+		SplashDamage:        true,
 	},
 }
 
@@ -211,6 +317,9 @@ const (
 
 	UnitRifle
 	UnitLaser
+	UnitMissile
+	UnitHunter
+	UnitTank
 
 	NumUnitKinds
 )
@@ -221,6 +330,12 @@ func (k UnitKind) String() string {
 		return "Rifle infantry"
 	case UnitLaser:
 		return "Laser infantry"
+	case UnitMissile:
+		return "Missile infantry"
+	case UnitHunter:
+		return "Hunter"
+	case UnitTank:
+		return "Tank"
 	default:
 		return "?"
 	}

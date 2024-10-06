@@ -1,6 +1,8 @@
 package groundscape
 
 import (
+	"fmt"
+
 	"github.com/ebitenui/ebitenui/widget"
 	"github.com/quasilyte/gscene"
 	"github.com/quasilyte/ldjam56-game/assets"
@@ -26,6 +28,7 @@ type Controller struct {
 	team1cards     *widget.Container
 	team2cards     *widget.Container
 	continueButton *widget.Button
+	restartButton  *widget.Button
 	cardsPanel     *widget.Container
 }
 
@@ -64,7 +67,9 @@ func (c *Controller) Init(ctx gscene.InitContext) {
 		c.continueButton.GetWidget().Visibility = widget.Visibility_Show
 		c.victory = winner.Index == 0
 		if c.victory {
+			game.G.PlaySound(assets.AudioVictory)
 			c.statusLabel.Label = "Status: victory"
+			c.restartButton.GetWidget().Visibility = widget.Visibility_Show
 		} else {
 			c.statusLabel.Label = "Status: defeat"
 		}
@@ -147,6 +152,8 @@ func (c *Controller) initUI() {
 				game.G.State.Level++
 				game.G.State.EnterLevel()
 				game.G.State.Credits += c.stage.Level.Reward
+				game.G.State.Credits += c.stage.Teams[0].CasualtyRefunds
+				fmt.Println("refunds:", c.stage.Teams[0].CasualtyRefunds)
 				survivors := game.G.State.Units[:0]
 				for _, u := range c.stage.Teams[0].Units {
 					if u.HP > 0 {
@@ -165,6 +172,17 @@ func (c *Controller) initUI() {
 	c.continueButton.GetWidget().Visibility = widget.Visibility_Hide_Blocking
 	rows.AddChild(c.continueButton)
 
+	c.restartButton = game.G.UI.NewButton(eui.ButtonConfig{
+		Text: "RETRY",
+		OnClick: func() {
+			game.G.State.Retries++
+			game.G.SceneManager.ChangeScene(c.back)
+		},
+		MinWidth: 300,
+	})
+	c.restartButton.GetWidget().Visibility = widget.Visibility_Hide_Blocking
+	rows.AddChild(c.restartButton)
+
 	game.G.UI.Build(c.scene, rows)
 }
 
@@ -177,26 +195,24 @@ func (c *Controller) updateCards(cards []gcombat.Card) {
 	c.team2cards.RemoveChildren()
 
 	for _, card := range cards {
-		info := card.Kind.Info()
-		switch {
-		case info.Category == gcombat.CardCategoryModifier:
+		switch card.TeamIndex {
+		case 0:
 			c.team1cards.AddChild(game.G.UI.NewText(eui.TextConfig{
-				Text: card.Kind.Info().Name,
-				Font: assets.FontTiny,
+				Text:      "<< " + card.Kind.Info().Name,
+				Font:      assets.FontTiny,
+				AlignLeft: true,
+				LayoutData: widget.RowLayoutData{
+					Position: widget.RowLayoutPositionStart,
+				},
 			}))
+		case 1:
 			c.team2cards.AddChild(game.G.UI.NewText(eui.TextConfig{
-				Text: card.Kind.Info().Name,
-				Font: assets.FontTiny,
-			}))
-		case card.TeamIndex == 0:
-			c.team1cards.AddChild(game.G.UI.NewText(eui.TextConfig{
-				Text: card.Kind.Info().Name,
-				Font: assets.FontTiny,
-			}))
-		case card.TeamIndex == 1:
-			c.team2cards.AddChild(game.G.UI.NewText(eui.TextConfig{
-				Text: card.Kind.Info().Name,
-				Font: assets.FontTiny,
+				Text:       card.Kind.Info().Name + " >>",
+				Font:       assets.FontTiny,
+				AlignRight: true,
+				LayoutData: widget.RowLayoutData{
+					Position: widget.RowLayoutPositionEnd,
+				},
 			}))
 		}
 	}

@@ -5,6 +5,7 @@ type Level struct {
 	EnemyCards  []CardKind
 
 	EnemyInfantrySpots [][2]int
+	EnemyVehicleSpots  [][2]int
 
 	Tiles [][]TileKind
 
@@ -30,6 +31,12 @@ func LoadLevel(level *LevelDef) *Level {
 			result.EnemyTroops = append(result.EnemyTroops, UnitRifle)
 		case 'L':
 			result.EnemyTroops = append(result.EnemyTroops, UnitLaser)
+		case 'M':
+			result.EnemyTroops = append(result.EnemyTroops, UnitMissile)
+		case 'H':
+			result.EnemyTroops = append(result.EnemyTroops, UnitHunter)
+		case 'T':
+			result.EnemyTroops = append(result.EnemyTroops, UnitTank)
 		}
 	}
 
@@ -55,6 +62,8 @@ func LoadLevel(level *LevelDef) *Level {
 			switch colTag {
 			case 'i':
 				result.EnemyInfantrySpots = append(result.EnemyInfantrySpots, [2]int{i, j})
+			case 'v':
+				result.EnemyVehicleSpots = append(result.EnemyVehicleSpots, [2]int{i, j})
 			}
 		}
 	}

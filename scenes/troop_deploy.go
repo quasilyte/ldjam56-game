@@ -135,6 +135,8 @@ func (c *troopDeployController) deployEnemyTroops() {
 		switch {
 		case u.Stats.Infantry:
 			rowcol = gmath.RandElem(&game.G.Rand, stage.Level.EnemyInfantrySpots)
+		default:
+			rowcol = gmath.RandElem(&game.G.Rand, stage.Level.EnemyVehicleSpots)
 		}
 		c.deployUnit(u, rowcol[0], rowcol[1])
 	}

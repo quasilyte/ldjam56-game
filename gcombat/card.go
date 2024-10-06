@@ -47,23 +47,26 @@ const (
 	CardUnknown CardKind = iota
 
 	// Movement command cards.
-	CardInfatryCharge
+	CardInfantryCharge
+	CardTankRush
 	CardStandGround
 	CardTakeCover
 
 	// Special action cards.
 	CardSuppressiveFire
-	CardArtilleryFire
+	CardFocusFire
 
 	// Bonus cards.
 	CardLuckyShot
+	CardFirstAid
 
 	// Modifier cards.
+	CardBadCover
 	CardIonStorm
 )
 
 var cardInfoTable = [...]CardInfo{
-	CardInfatryCharge: {
+	CardInfantryCharge: {
 		Name:     "Infantry Charge",
 		Category: CardCategoryMovement,
 		Duration: 1,
@@ -78,14 +81,19 @@ var cardInfoTable = [...]CardInfo{
 		Category: CardCategoryMovement,
 		Duration: 1,
 	},
+	CardTankRush: {
+		Name:     "Tank Rush",
+		Category: CardCategoryMovement,
+		Duration: 2,
+	},
 
 	CardSuppressiveFire: {
 		Name:     "Suppressive Fire",
 		Category: CardCategorySpecial,
 		Duration: 1,
 	},
-	CardArtilleryFire: {
-		Name:     "Artillery Fire",
+	CardFocusFire: {
+		Name:     "Focus Fire",
 		Category: CardCategorySpecial,
 		Duration: 1,
 	},
@@ -95,7 +103,17 @@ var cardInfoTable = [...]CardInfo{
 		Category: CardCategoryBonus,
 		Duration: 1,
 	},
+	CardFirstAid: {
+		Name:     "First Aid",
+		Category: CardCategoryBonus,
+		Duration: 1,
+	},
 
+	CardBadCover: {
+		Name:     "Bad Cover",
+		Category: CardCategoryModifier,
+		Duration: 2,
+	},
 	CardIonStorm: {
 		Name:     "Ion Storm",
 		Category: CardCategoryModifier,

@@ -26,10 +26,11 @@ func main() {
 	game.G.Loader = resource.NewLoader(audioContext)
 	game.G.Loader.OpenAssetFunc = assets.MakeOpenAssetFunc()
 	game.G.Rand.SetSeed(time.Now().UnixNano())
+	game.G.Audio.Init(audioContext, game.G.Loader)
 	game.G.UI = eui.NewBuilder(eui.Config{
 		Loader: game.G.Loader,
+		Audio:  &game.G.Audio,
 	})
-	game.G.Audio.Init(audioContext, game.G.Loader)
 
 	assets.RegisterResources(game.G.Loader)
 	game.G.UI.Init()

@@ -27,12 +27,16 @@ func registerImageResources(loader *resource.Loader) {
 		ImageTileGrid:      {Path: "image/tile_grid.png"},
 		ImageTileSelector:  {Path: "image/tile_selector.png"},
 
-		ImageUnitRifle: {Path: "image/unit_rifle.png"},
-		ImageUnitLaser: {Path: "image/unit_laser.png"},
-		ImageUnitTank:  {Path: "image/unit_tank.png"},
+		ImageUnitRifle:   {Path: "image/unit_rifle.png"},
+		ImageUnitLaser:   {Path: "image/unit_laser.png"},
+		ImageUnitMissile: {Path: "image/unit_missile.png"},
+		ImageUnitHunter:  {Path: "image/unit_hunter.png"},
+		ImageUnitTank:    {Path: "image/unit_tank.png"},
 
-		ImageProjectileRifle: {Path: "image/projectile_rifle.png"},
-		ImageProjectileLaser: {Path: "image/projectile_laser.png"},
+		ImageProjectileRifle:   {Path: "image/projectile_rifle.png"},
+		ImageProjectileLaser:   {Path: "image/projectile_laser.png"},
+		ImageProjectileMissile: {Path: "image/projectile_missile.png"},
+		ImageProjectileTank:    {Path: "image/projectile_tank.png"},
 	}
 
 	for id, info := range resources {
@@ -65,8 +69,12 @@ const (
 
 	ImageUnitRifle
 	ImageUnitLaser
+	ImageUnitMissile
+	ImageUnitHunter
 	ImageUnitTank
 
 	ImageProjectileRifle
 	ImageProjectileLaser
+	ImageProjectileMissile
+	ImageProjectileTank
 )
