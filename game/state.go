@@ -12,6 +12,9 @@ type State struct {
 
 	Credits int
 
+	BackupCredits int
+	BackupUnits   []gcombat.UnitKind
+
 	Easy bool
 
 	CurrentStage *gcombat.Stage

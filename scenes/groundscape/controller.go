@@ -7,6 +7,7 @@ import (
 	"github.com/quasilyte/ebitengine-graphics/particle"
 	"github.com/quasilyte/gmath"
 	"github.com/quasilyte/gscene"
+	"github.com/quasilyte/gslices"
 	"github.com/quasilyte/ldjam56-game/assets"
 	"github.com/quasilyte/ldjam56-game/eui"
 	"github.com/quasilyte/ldjam56-game/game"
@@ -191,6 +192,10 @@ func (c *Controller) initUI() {
 					}
 				}
 				game.G.State.Units = survivors
+				{
+					game.G.State.BackupCredits = game.G.State.Credits
+					game.G.State.BackupUnits = gslices.Clone(game.G.State.Units)
+				}
 				game.G.SceneManager.ChangeScene(unitshop.NewController(c.back))
 			} else {
 				game.G.State.Retries++

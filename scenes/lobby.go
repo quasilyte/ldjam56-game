@@ -7,11 +7,13 @@ import (
 
 	"github.com/ebitenui/ebitenui/widget"
 	"github.com/quasilyte/gscene"
+	"github.com/quasilyte/gslices"
 	"github.com/quasilyte/ldjam56-game/assets"
 	"github.com/quasilyte/ldjam56-game/eui"
 	"github.com/quasilyte/ldjam56-game/game"
 	"github.com/quasilyte/ldjam56-game/gcombat"
 	"github.com/quasilyte/ldjam56-game/scenes/sceneutil"
+	"github.com/quasilyte/ldjam56-game/scenes/unitshop"
 	"github.com/quasilyte/ldjam56-game/styles"
 )
 
@@ -145,6 +147,27 @@ func (c *lobbyController) Init(ctx gscene.InitContext) {
 			game.G.SceneManager.ChangeScene(NewCardpickController())
 		},
 	}))
+
+	root.AddChild(game.G.UI.NewText(eui.TextConfig{Text: ""}))
+
+	changeUnits := game.G.UI.NewButton(eui.ButtonConfig{
+		Text:     "CHANGE UNITS",
+		MinWidth: 160,
+		Tooltip: game.G.UI.NewText(eui.TextConfig{
+			Text: "Re-recruit reinforcements",
+			Font: assets.FontTiny,
+		}),
+		OnClick: func() {
+			{
+				game.G.State.Credits = game.G.State.BackupCredits
+				game.G.State.Units = gslices.Clone(game.G.State.BackupUnits)
+			}
+			back := NewLobbyController()
+			game.G.SceneManager.ChangeScene(unitshop.NewController(back))
+		},
+	})
+	changeUnits.GetWidget().Disabled = game.G.State.Level == 0
+	root.AddChild(changeUnits)
 
 	game.G.UI.Build(ctx.Scene, root)
 }
