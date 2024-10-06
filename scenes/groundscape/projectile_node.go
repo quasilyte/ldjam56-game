@@ -9,6 +9,7 @@ import (
 	"github.com/quasilyte/ldjam56-game/game"
 	"github.com/quasilyte/ldjam56-game/gcombat"
 	"github.com/quasilyte/ldjam56-game/scenes/sceneutil"
+	"github.com/quasilyte/ldjam56-game/styles"
 )
 
 type projectileNode struct {
@@ -30,7 +31,9 @@ func (p *projectileNode) IsDisposed() bool {
 }
 
 func (p *projectileNode) Dispose() {
-	p.sprite.Dispose()
+	if p.sprite != nil {
+		p.sprite.Dispose()
+	}
 	if p.emitter != nil {
 		p.emitter.Pos.Base = nil
 		p.emitter.SetEmitting(false)
@@ -38,11 +41,22 @@ func (p *projectileNode) Dispose() {
 }
 
 func (p *projectileNode) Init(scene *gscene.Scene) {
-	p.sprite = game.G.NewSprite(p.data.Attacker.Stats.ProjectileImage)
-	p.sprite.Pos.Offset = sceneutil.CombatMapOffset(game.G.State.CurrentStage.MapBg)
-	p.sprite.Pos.Base = &p.data.Pos
-	p.sprite.Rotation = &p.data.Rotation
-	scene.AddGraphics(p.sprite, 0)
+	if p.data.Attacker.Stats.Kind != gcombat.UnitLaser {
+		p.sprite = game.G.NewSprite(p.data.Attacker.Stats.ProjectileImage)
+		p.sprite.Pos.Offset = sceneutil.CombatMapOffset(game.G.State.CurrentStage.MapBg)
+		p.sprite.Pos.Base = &p.data.Pos
+		p.sprite.Rotation = &p.data.Rotation
+		scene.AddGraphics(p.sprite, 0)
+	} else {
+		offset := sceneutil.CombatMapOffset(game.G.State.CurrentStage.MapBg)
+		clr := styles.ColorNormal.Color()
+		if p.data.Pos.DistanceTo(p.data.AimPos) <= p.data.Attacker.Stats.ProjectileHitRadius {
+			clr = styles.ColorBright.Color()
+		}
+		line := newLineNode(p.data.Pos.Add(offset), p.data.AimPos.Add(offset), clr)
+		scene.AddObject(line)
+		p.data.Pos = p.data.AimPos
+	}
 
 	if sfx := p.data.Attacker.Stats.FireSound; sfx != assets.AudioNone {
 		game.G.PlaySound(sfx)
