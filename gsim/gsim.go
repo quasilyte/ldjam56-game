@@ -212,7 +212,7 @@ func (r *Runner) detonateProjectile(p *gcombat.Projectile) {
 
 	damage := p.Attacker.Stats.Damage
 	if p.Attacker.Stats.Kind == gcombat.UnitLaser && p.FocusedFire {
-		damage += 2
+		damage += 1
 	}
 	r.dealDamage(damage, p.Attacker, p.Target)
 }

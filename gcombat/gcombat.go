@@ -162,7 +162,7 @@ var unitStatsTable = [...]UnitStats{
 		Image:           assets.ImageUnitRifle,
 		ProjectileImage: assets.ImageProjectileRifle,
 		FireSound:       assets.AudioRifle1,
-		MaxHP:           13,
+		MaxHP:           15,
 		Speed:           18,
 		TerrainSpeed: [NumTileKinds]float64{
 			TilePlains:    1.0,
@@ -179,7 +179,7 @@ var unitStatsTable = [...]UnitStats{
 		AntiArmorDamage:     0.5,
 		Reload:              0.8,
 		AccuracyDist:        64 * 3,
-		BaseAccuracy:        0.4,
+		BaseAccuracy:        0.425,
 		IonStorm:            false,
 		Infantry:            true,
 		SuppressiveROF:      true,
@@ -193,7 +193,7 @@ var unitStatsTable = [...]UnitStats{
 		Image:           assets.ImageUnitLaser,
 		ProjectileImage: assets.ImageProjectileLaser,
 		FireSound:       assets.AudioLaser1,
-		MaxHP:           15,
+		MaxHP:           14,
 		Speed:           12,
 		TerrainSpeed: [NumTileKinds]float64{
 			TilePlains:    1.0,
