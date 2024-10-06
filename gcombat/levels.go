@@ -42,7 +42,7 @@ var LevelList = []*LevelDef{
 		// expected to rush with their gatling troops.
 		// Using forests for cover is encouraged.
 		// Choosing a mountain-heavy lane is discouraged.
-		Hint:   "Rifles beat lasers when close enough",
+		Hint:   "Use covers (forest tiles) and get closer",
 		Reward: 45,
 		Tiles: [][]rune{
 			{'F', ' ', 'M', ' ', ' ', ' '},

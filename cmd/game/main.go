@@ -43,6 +43,7 @@ func main() {
 	game.G.UI.Init()
 
 	ebiten.SetFullscreen(true)
+	ebiten.SetWindowTitle("NebuLeet Troopers")
 
 	game.G.SceneManager.ChangeScene(scenes.NewMainMenuController())
 	// game.G.SceneManager.ChangeScene(groundscape.NewController(groundscape.ControllerConfig{

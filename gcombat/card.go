@@ -76,7 +76,7 @@ var cardInfoTable = [...]CardInfo{
 		Duration: 1,
 		Description: strings.Join([]string{
 			"Makes infantry move faster",
-			"also makes them immute to the",
+			"also makes them immune to the",
 			"effects of Suppressive Fire",
 		}, "\n"),
 	},
@@ -123,7 +123,7 @@ var cardInfoTable = [...]CardInfo{
 		Duration: 1,
 		Description: strings.Join([]string{
 			"Order units to concentrate",
-			"their firepower on fewer targets",
+			"their firepower on wounded targets",
 		}, "\n"),
 	},
 
@@ -163,7 +163,7 @@ var cardInfoTable = [...]CardInfo{
 		Duration: 2,
 		Description: strings.Join([]string{
 			"Makes it impossible to fire laser weapons",
-			"for the durattion of this modifier.",
+			"for the duration of this modifier.",
 			"Affects everyone",
 		}, "\n"),
 	},

@@ -86,11 +86,12 @@ func (c *difficultyPickerController) start(easyMode bool) {
 		gcombat.UnitRifle,
 		gcombat.UnitRifle,
 		gcombat.UnitRifle,
-		gcombat.UnitLaser,
 	}
 	if easyMode {
 		units = append(units, gcombat.UnitRifle)
 	}
+	units = append(units, gcombat.UnitLaser)
+
 	game.G.State = &game.State{
 		Level:   0,
 		Credits: 0,

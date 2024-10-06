@@ -183,7 +183,6 @@ func (c *Controller) initUI() {
 				if game.G.State.Easy {
 					refundRate = 0.4
 				}
-				fmt.Println("rate=", refundRate, "=>", gmath.Scale(c.stage.Teams[0].CasualtyCost, refundRate))
 				game.G.State.Credits += gmath.Scale(c.stage.Teams[0].CasualtyCost, refundRate)
 				survivors := game.G.State.Units[:0]
 				for _, u := range c.stage.Teams[0].Units {
