@@ -450,7 +450,7 @@ func (r *Runner) maybeOpenFire(u *gcombat.Unit) {
 			dist := u.Pos.DistanceTo(u2.Pos)
 			score := 1000.0 - dist
 			if !u2.Stats.Infantry {
-				if dist > u.Stats.AccuracyDist {
+				if dist <= u.Stats.AccuracyDist {
 					score *= 0.8 + (u.Stats.AntiArmorDamage * 0.2)
 				} else {
 					score *= 0.5 + (u.Stats.AntiArmorDamage * 0.5)

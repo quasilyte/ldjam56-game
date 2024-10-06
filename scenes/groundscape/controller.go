@@ -22,13 +22,14 @@ type Controller struct {
 
 	stage *gcombat.Stage
 
-	victory        bool
-	statusLabel    *widget.Text
-	team1cards     *widget.Container
-	team2cards     *widget.Container
-	continueButton *widget.Button
-	restartButton  *widget.Button
-	cardsPanel     *widget.Container
+	victory          bool
+	statusLabel      *widget.Text
+	team1cards       *widget.Container
+	team2cards       *widget.Container
+	continueButton   *widget.Button
+	restartButton    *widget.Button
+	surrenderButtton *widget.Button
+	cardsPanel       *widget.Container
 }
 
 type ControllerConfig struct {
@@ -63,6 +64,7 @@ func (c *Controller) Init(ctx gscene.InitContext) {
 	})
 	c.runner.EventFinished.Connect(nil, func(winner *gcombat.Team) {
 		c.cardsPanel.GetWidget().Visibility = widget.Visibility_Hide
+		c.surrenderButtton.GetWidget().Visibility = widget.Visibility_Hide
 		c.continueButton.GetWidget().Visibility = widget.Visibility_Show
 		c.victory = winner.Index == 0
 		if c.victory {
@@ -142,6 +144,16 @@ func (c *Controller) initUI() {
 
 		rows.AddChild(panel)
 	}
+
+	c.surrenderButtton = game.G.UI.NewButton(eui.ButtonConfig{
+		Text: "SURRENDER",
+		OnClick: func() {
+			game.G.State.Retries++
+			game.G.SceneManager.ChangeScene(c.back)
+		},
+		MinWidth: 300,
+	})
+	rows.AddChild(c.surrenderButtton)
 
 	c.continueButton = game.G.UI.NewButton(eui.ButtonConfig{
 		Text: "CONTINUE",
