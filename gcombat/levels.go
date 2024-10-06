@@ -68,6 +68,8 @@ var LevelList = []*LevelDef{
 			CardSuppressiveFire,
 
 			CardLuckyShot,
+
+			CardFocusFire,
 		},
 		EnemyCards: []CardKind{
 			CardLuckyShot,

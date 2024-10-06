@@ -123,7 +123,9 @@ var cardInfoTable = [...]CardInfo{
 		Duration: 1,
 		Description: strings.Join([]string{
 			"Order units to concentrate",
-			"their firepower on wounded targets",
+			"their firepower on wounded targets.",
+			"Your Laser infantry gets extra damage bonus",
+			"for the duration of one phase",
 		}, "\n"),
 	},
 

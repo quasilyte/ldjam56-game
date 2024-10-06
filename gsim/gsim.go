@@ -210,7 +210,11 @@ func (r *Runner) detonateProjectile(p *gcombat.Projectile) {
 		return
 	}
 
-	r.dealDamage(p.Attacker.Stats.Damage, p.Attacker, p.Target)
+	damage := p.Attacker.Stats.Damage
+	if p.Attacker.Stats.Kind == gcombat.UnitLaser && p.FocusedFire {
+		damage += 3
+	}
+	r.dealDamage(damage, p.Attacker, p.Target)
 }
 
 func (r *Runner) dealDamage(value float64, attacker, target *gcombat.Unit) {
@@ -440,9 +444,9 @@ func (r *Runner) maybeOpenFire(u *gcombat.Unit) {
 	aimedDist := u.Stats.AccuracyDist
 	var target *gcombat.Unit
 	focused := false
+	tryingToFocusFire := r.cardIsActive(u.Team.Index, gcombat.CardFocusFire)
 	{
 		bestScore := 0.0
-		focusFire := r.cardIsActive(u.Team.Index, gcombat.CardFocusFire)
 		for i, u2 := range r.allUnits {
 			if u2.Team == u.Team {
 				continue
@@ -457,7 +461,7 @@ func (r *Runner) maybeOpenFire(u *gcombat.Unit) {
 				}
 			}
 			wasFocused := false
-			if focusFire && dist <= (1.5*u.Stats.AccuracyDist) {
+			if tryingToFocusFire && dist <= (1.5*u.Stats.AccuracyDist) {
 				score += float64(i * 30)
 				if u2.HP <= u2.Stats.MaxHP*0.8 {
 					wasFocused = true
@@ -505,12 +509,13 @@ func (r *Runner) maybeOpenFire(u *gcombat.Unit) {
 	}
 
 	p := &gcombat.Projectile{
-		Attacker: u,
-		Target:   target,
-		Pos:      u.Pos,
-		AimPos:   aimPos,
-		GoodAim:  goodAim,
-		Rotation: u.Pos.AngleToPoint(aimPos),
+		Attacker:    u,
+		Target:      target,
+		Pos:         u.Pos,
+		AimPos:      aimPos,
+		GoodAim:     goodAim,
+		Rotation:    u.Pos.AngleToPoint(aimPos),
+		FocusedFire: tryingToFocusFire,
 	}
 	r.projectiles = append(r.projectiles, p)
 	r.EventProjectileCreated.Emit(p)

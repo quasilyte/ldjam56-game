@@ -22,13 +22,14 @@ type Stage struct {
 }
 
 type Projectile struct {
-	Pos      gmath.Vec
-	Rotation gmath.Rad
-	Attacker *Unit
-	Target   *Unit
-	AimPos   gmath.Vec
-	GoodAim  bool
-	Disposed bool
+	Pos         gmath.Vec
+	Rotation    gmath.Rad
+	Attacker    *Unit
+	Target      *Unit
+	AimPos      gmath.Vec
+	GoodAim     bool
+	Disposed    bool
+	FocusedFire bool
 
 	EventDisposed gsignal.Event[gsignal.Void]
 }
