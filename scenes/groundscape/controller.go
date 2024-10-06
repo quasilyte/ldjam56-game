@@ -2,6 +2,7 @@ package groundscape
 
 import (
 	"github.com/ebitenui/ebitenui/widget"
+	"github.com/quasilyte/ebitengine-graphics/particle"
 	"github.com/quasilyte/gscene"
 	"github.com/quasilyte/ldjam56-game/assets"
 	"github.com/quasilyte/ldjam56-game/eui"
@@ -17,6 +18,8 @@ type Controller struct {
 	scene *gscene.Scene
 
 	back gscene.Controller
+
+	state *sceneState
 
 	runner *gsim.Runner
 
@@ -41,6 +44,9 @@ func NewController(config ControllerConfig) *Controller {
 	return &Controller{
 		stage: config.Stage,
 		back:  config.Back,
+		state: &sceneState{
+			renderer: particle.NewRenderer(),
+		},
 	}
 }
 
@@ -59,7 +65,7 @@ func (c *Controller) Init(ctx gscene.InitContext) {
 
 	c.runner = gsim.NewRunner(c.stage)
 	c.runner.EventProjectileCreated.Connect(nil, func(p *gcombat.Projectile) {
-		n := newProjectileNode(p)
+		n := newProjectileNode(p, c.state)
 		c.scene.AddObject(n)
 	})
 	c.runner.EventFinished.Connect(nil, func(winner *gcombat.Team) {
@@ -76,6 +82,8 @@ func (c *Controller) Init(ctx gscene.InitContext) {
 		}
 	})
 	c.runner.EventUpdateCards.Connect(nil, c.updateCards)
+
+	c.scene.AddGraphics(c.state.renderer, 0)
 
 	c.initUI()
 }
@@ -202,6 +210,7 @@ func (c *Controller) initUI() {
 
 func (c *Controller) Update(delta float64) {
 	c.runner.Update(delta)
+	c.state.UpdateEmitters(delta)
 }
 
 func (c *Controller) updateCards(cards []gcombat.Card) {

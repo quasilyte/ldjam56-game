@@ -2,6 +2,7 @@ package groundscape
 
 import (
 	graphics "github.com/quasilyte/ebitengine-graphics"
+	"github.com/quasilyte/ebitengine-graphics/particle"
 	"github.com/quasilyte/gscene"
 	"github.com/quasilyte/gsignal"
 	"github.com/quasilyte/ldjam56-game/assets"
@@ -11,43 +12,65 @@ import (
 )
 
 type projectileNode struct {
-	data   *gcombat.Projectile
-	sprite *graphics.Sprite
+	data    *gcombat.Projectile
+	sprite  *graphics.Sprite
+	emitter *particle.Emitter
+	state   *sceneState
 }
 
-func newProjectileNode(data *gcombat.Projectile) *projectileNode {
-	return &projectileNode{data: data}
+func newProjectileNode(data *gcombat.Projectile, state *sceneState) *projectileNode {
+	return &projectileNode{
+		data:  data,
+		state: state,
+	}
 }
 
-func (u *projectileNode) IsDisposed() bool {
-	return u.data.Disposed
+func (p *projectileNode) IsDisposed() bool {
+	return p.data.Disposed
 }
 
-func (u *projectileNode) Dispose() {
-	u.sprite.Dispose()
+func (p *projectileNode) Dispose() {
+	p.sprite.Dispose()
+	if p.emitter != nil {
+		p.emitter.Pos.Base = nil
+		p.emitter.SetEmitting(false)
+	}
 }
 
-func (u *projectileNode) Init(scene *gscene.Scene) {
-	u.sprite = game.G.NewSprite(u.data.Attacker.Stats.ProjectileImage)
-	u.sprite.Pos.Offset = sceneutil.CombatMapOffset(game.G.State.CurrentStage.MapBg)
-	u.sprite.Pos.Base = &u.data.Pos
-	u.sprite.Rotation = &u.data.Rotation
-	scene.AddGraphics(u.sprite, 0)
+func (p *projectileNode) Init(scene *gscene.Scene) {
+	p.sprite = game.G.NewSprite(p.data.Attacker.Stats.ProjectileImage)
+	p.sprite.Pos.Offset = sceneutil.CombatMapOffset(game.G.State.CurrentStage.MapBg)
+	p.sprite.Pos.Base = &p.data.Pos
+	p.sprite.Rotation = &p.data.Rotation
+	scene.AddGraphics(p.sprite, 0)
 
-	if sfx := u.data.Attacker.Stats.FireSound; sfx != assets.AudioNone {
+	if sfx := p.data.Attacker.Stats.FireSound; sfx != assets.AudioNone {
 		game.G.PlaySound(sfx)
 	}
 
-	u.data.EventDisposed.Connect(nil, func(gsignal.Void) {
-		if u.data.Attacker.Stats.SplashDamage {
+	switch p.data.Attacker.Stats.Kind {
+	case gcombat.UnitMissile:
+		emitter := particle.NewEmitter(particleTemplateMissileTrail)
+		emitter.Pos.Offset = sceneutil.CombatMapOffset(game.G.State.CurrentStage.MapBg)
+		emitter.Pos.Base = &p.data.Pos
+		emitter.Rotation = &p.data.Rotation
+		emitter.PivotOffset.X = -6
+		p.state.renderer.AddEmitter(emitter)
+		emitter.SetEmitting(true)
+		p.state.emitters = append(p.state.emitters, emitter)
+		p.emitter = emitter
+	}
+
+	p.data.EventDisposed.Connect(nil, func(gsignal.Void) {
+		if p.data.Attacker.Stats.SplashDamage {
 			effect := newEffectNode(effectNodeConfig{
 				Sprite: game.G.NewSprite(assets.ImageExplosion),
-				Pos:    u.sprite.Pos.Resolve(),
+				Pos:    p.sprite.Pos.Resolve(),
 			})
 			scene.AddObject(effect)
 		}
-		u.Dispose()
+		p.Dispose()
 	})
 }
 
-func (u *projectileNode) Update(delta float64) {}
+func (p *projectileNode) Update(delta float64) {}

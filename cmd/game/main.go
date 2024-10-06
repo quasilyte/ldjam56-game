@@ -12,6 +12,7 @@ import (
 	"github.com/quasilyte/ldjam56-game/eui"
 	"github.com/quasilyte/ldjam56-game/game"
 	"github.com/quasilyte/ldjam56-game/scenes"
+	"github.com/quasilyte/ldjam56-game/scenes/groundscape"
 )
 
 func main() {
@@ -36,6 +37,7 @@ func main() {
 		Loader: game.G.Loader,
 		Audio:  &game.G.Audio,
 	})
+	groundscape.InitParticleTemplates()
 
 	assets.RegisterResources(game.G.Loader)
 	game.G.UI.Init()

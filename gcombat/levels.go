@@ -59,6 +59,7 @@ var LevelList = []*LevelDef{
 			{' ', 'M', 'M', 'F', ' ', 'i'},
 		},
 		EnemyTroops: []rune{'L', 'L', 'L', 'L'},
+		// EnemyTroops: []rune{'M', 'M'},
 		CardPicks:   2,
 		DeployWidth: 1,
 		NewCards: []CardKind{
