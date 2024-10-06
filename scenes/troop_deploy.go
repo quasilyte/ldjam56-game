@@ -2,6 +2,7 @@ package scenes
 
 import (
 	"fmt"
+	"strings"
 
 	"github.com/ebitenui/ebitenui/widget"
 	graphics "github.com/quasilyte/ebitengine-graphics"
@@ -172,7 +173,7 @@ func (c *troopDeployController) onUnitDeployed(row, col int) {
 		for _, b := range c.tileButtons {
 			b.GetWidget().Disabled = true
 		}
-		c.deployHint.Label = styles.Normal("All troops are deployed!")
+		c.deployHint.Label = styles.Orange("All troops are deployed!")
 	} else {
 		c.updateCurrentlyDeploying()
 	}
@@ -184,5 +185,12 @@ func (c *troopDeployController) updateTroopsDeployedCounter() {
 
 func (c *troopDeployController) updateCurrentlyDeploying() {
 	u := game.G.State.Units[c.deployed]
-	c.deployHint.Label = fmt.Sprintf("Currently deploying: %s", styles.Orange(u.String()))
+	stackSize := 1
+	for _, u2 := range game.G.State.Units[c.deployed+1:] {
+		if u2 != u {
+			break
+		}
+		stackSize++
+	}
+	c.deployHint.Label = fmt.Sprintf("Currently deploying: %s %s", styles.Orange(u.String()), strings.Repeat("●", stackSize))
 }

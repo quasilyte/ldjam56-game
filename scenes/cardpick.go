@@ -210,7 +210,7 @@ func (c *cardpickController) pickEnemyCard() {
 		c.enemyCardsPicked = append(c.enemyCardsPicked, enemySelectedCard)
 		c.enemyLabel.Label = fmt.Sprintf("Enemy picks %s", styles.Orange(enemySelectedCard.Info().Name))
 	} else {
-		c.enemyLabel.Label = "Tactics are scheduled!"
+		c.enemyLabel.Label = styles.Orange("Tactics are scheduled!")
 	}
 }
 
