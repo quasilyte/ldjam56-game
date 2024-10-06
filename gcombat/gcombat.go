@@ -81,6 +81,13 @@ type Team struct {
 	Cards []Card
 }
 
+func (t *Team) EnemyIndex() int {
+	if t.Index == 0 {
+		return 1
+	}
+	return 0
+}
+
 type Unit struct {
 	Stats *UnitStats
 
@@ -149,7 +156,7 @@ var unitStatsTable = [...]UnitStats{
 		Image:           assets.ImageUnitRifle,
 		ProjectileImage: assets.ImageProjectileRifle,
 		FireSound:       assets.AudioRifle1,
-		MaxHP:           10,
+		MaxHP:           13,
 		Speed:           18,
 		TerrainSpeed: [NumTileKinds]float64{
 			TilePlains:    1.0,

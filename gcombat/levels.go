@@ -79,20 +79,21 @@ var LevelList = []*LevelDef{
 		// Level 2:
 		// Basically a level 1 reversed.
 		// The player is expected to get some laser troops.
-		Hint: "TODO",
+		Hint:   "TODO",
+		Reward: 55,
 		Tiles: [][]rune{
 			{' ', 'M', ' ', 'M', ' ', ' ', 'F'},
 			{' ', 'M', ' ', ' ', ' ', ' ', 'F'},
 			{' ', ' ', ' ', ' ', ' ', ' ', ' '},
 			{' ', ' ', 'F', ' ', ' ', 'F', ' '},
-			{' ', 'M', 'F', 'F', 'F', ' ', ' '},
+			{' ', 'M', ' ', 'F', 'F', ' ', ' '},
 		},
 		EnemyDeploy: [][]rune{
 			{' ', 'M', ' ', 'M', ' ', ' ', 'i'},
 			{' ', 'M', ' ', ' ', ' ', ' ', 'i'},
 			{' ', ' ', ' ', ' ', ' ', ' ', ' '},
 			{' ', ' ', 'F', ' ', ' ', 'F', ' '},
-			{' ', 'M', 'F', 'F', 'F', ' ', 'i'},
+			{' ', 'M', ' ', 'F', 'F', ' ', 'i'},
 		},
 		EnemyTroops: []rune{'R', 'R', 'R', 'R', 'R', 'R'},
 		CardPicks:   3,

@@ -3,6 +3,7 @@ package groundscape
 import (
 	"github.com/ebitenui/ebitenui/widget"
 	"github.com/quasilyte/gscene"
+	"github.com/quasilyte/ldjam56-game/assets"
 	"github.com/quasilyte/ldjam56-game/eui"
 	"github.com/quasilyte/ldjam56-game/game"
 	"github.com/quasilyte/ldjam56-game/gcombat"
@@ -22,7 +23,10 @@ type Controller struct {
 
 	victory        bool
 	statusLabel    *widget.Text
+	team1cards     *widget.Container
+	team2cards     *widget.Container
 	continueButton *widget.Button
+	cardsPanel     *widget.Container
 }
 
 type ControllerConfig struct {
@@ -56,6 +60,7 @@ func (c *Controller) Init(ctx gscene.InitContext) {
 		c.scene.AddObject(n)
 	})
 	c.runner.EventFinished.Connect(nil, func(winner *gcombat.Team) {
+		c.cardsPanel.GetWidget().Visibility = widget.Visibility_Hide
 		c.continueButton.GetWidget().Visibility = widget.Visibility_Show
 		c.victory = winner.Index == 0
 		if c.victory {
@@ -64,6 +69,7 @@ func (c *Controller) Init(ctx gscene.InitContext) {
 			c.statusLabel.Label = "Status: defeat"
 		}
 	})
+	c.runner.EventUpdateCards.Connect(nil, c.updateCards)
 
 	c.initUI()
 }
@@ -93,6 +99,45 @@ func (c *Controller) initUI() {
 		Text: "Status: turn 1",
 	})
 	rows.AddChild(c.statusLabel)
+
+	{
+		panel := game.G.UI.NewPanel(eui.PanelConfig{
+			MinHeight: 36,
+		})
+		c.cardsPanel = panel
+
+		cols := widget.NewContainer(
+			widget.ContainerOpts.Layout(widget.NewGridLayout(
+				widget.GridLayoutOpts.Columns(2),
+				widget.GridLayoutOpts.Spacing(8, 0),
+				widget.GridLayoutOpts.Stretch([]bool{true, true}, nil),
+			)),
+			widget.ContainerOpts.WidgetOpts(
+				widget.WidgetOpts.LayoutData(widget.AnchorLayoutData{
+					StretchHorizontal: true,
+				}),
+			),
+		)
+
+		c.team1cards = widget.NewContainer(
+			widget.ContainerOpts.Layout(widget.NewRowLayout(
+				widget.RowLayoutOpts.Direction(widget.DirectionVertical),
+				widget.RowLayoutOpts.Spacing(4),
+			)),
+		)
+		c.team2cards = widget.NewContainer(
+			widget.ContainerOpts.Layout(widget.NewRowLayout(
+				widget.RowLayoutOpts.Direction(widget.DirectionVertical),
+				widget.RowLayoutOpts.Spacing(4),
+			)),
+		)
+		cols.AddChild(c.team1cards)
+		cols.AddChild(c.team2cards)
+
+		panel.AddChild(cols)
+
+		rows.AddChild(panel)
+	}
 
 	c.continueButton = game.G.UI.NewButton(eui.ButtonConfig{
 		Text: "CONTINUE",
@@ -125,4 +170,34 @@ func (c *Controller) initUI() {
 
 func (c *Controller) Update(delta float64) {
 	c.runner.Update(delta)
+}
+
+func (c *Controller) updateCards(cards []gcombat.Card) {
+	c.team1cards.RemoveChildren()
+	c.team2cards.RemoveChildren()
+
+	for _, card := range cards {
+		info := card.Kind.Info()
+		switch {
+		case info.Category == gcombat.CardCategoryModifier:
+			c.team1cards.AddChild(game.G.UI.NewText(eui.TextConfig{
+				Text: card.Kind.Info().Name,
+				Font: assets.FontTiny,
+			}))
+			c.team2cards.AddChild(game.G.UI.NewText(eui.TextConfig{
+				Text: card.Kind.Info().Name,
+				Font: assets.FontTiny,
+			}))
+		case card.TeamIndex == 0:
+			c.team1cards.AddChild(game.G.UI.NewText(eui.TextConfig{
+				Text: card.Kind.Info().Name,
+				Font: assets.FontTiny,
+			}))
+		case card.TeamIndex == 1:
+			c.team2cards.AddChild(game.G.UI.NewText(eui.TextConfig{
+				Text: card.Kind.Info().Name,
+				Font: assets.FontTiny,
+			}))
+		}
+	}
 }

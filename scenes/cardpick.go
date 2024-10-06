@@ -138,13 +138,13 @@ func (c *cardpickController) Init(ctx gscene.InitContext) {
 		c.enemyLabel = game.G.UI.NewText(eui.TextConfig{
 			MinWidth:    220,
 			Font:        assets.FontTiny,
-			Text:        "You have the first pick!",
 			ForceBBCode: true,
 			LayoutData: widget.AnchorLayoutData{
 				VerticalPosition:   widget.AnchorLayoutPositionCenter,
 				HorizontalPosition: widget.AnchorLayoutPositionCenter,
 			},
 		})
+		c.pickEnemyCard()
 		panel.AddChild(c.enemyLabel)
 		root.AddChild(panel)
 	}
@@ -160,7 +160,10 @@ func (c *cardpickController) Init(ctx gscene.InitContext) {
 			}
 			team1.Units = units1
 			for _, k := range c.cardsPicked {
-				team1.Cards = append(team1.Cards, gcombat.Card{Kind: k})
+				team1.Cards = append(team1.Cards, gcombat.Card{
+					TeamIndex: 0,
+					Kind:      k,
+				})
 			}
 
 			team2 := &gcombat.Team{Index: 1}
@@ -171,7 +174,10 @@ func (c *cardpickController) Init(ctx gscene.InitContext) {
 			}
 			team2.Units = units2
 			for _, k := range c.enemyCardsPicked {
-				team2.Cards = append(team2.Cards, gcombat.Card{Kind: k})
+				team2.Cards = append(team2.Cards, gcombat.Card{
+					TeamIndex: 1,
+					Kind:      k,
+				})
 			}
 
 			stage := gcombat.CreateStage(gcombat.StageConfig{
@@ -197,6 +203,17 @@ func (c *cardpickController) updateCounterLabel() {
 		len(c.cardsPicked), c.level.CardPicks)
 }
 
+func (c *cardpickController) pickEnemyCard() {
+	if len(c.enemyCardsPool) > 0 {
+		enemySelectedCard := c.enemyCardsPool[len(c.enemyCardsPool)-1]
+		c.enemyCardsPool = c.enemyCardsPool[:len(c.enemyCardsPool)-1]
+		c.enemyCardsPicked = append(c.enemyCardsPicked, enemySelectedCard)
+		c.enemyLabel.Label = fmt.Sprintf("Enemy picks %s", styles.Background(enemySelectedCard.Info().Name))
+	} else {
+		c.enemyLabel.Label = "Tactics are scheduled!"
+	}
+}
+
 func (c *cardpickController) onCardPicked(row, col int) {
 	selectedCard := c.cardsSelection[row][col]
 	c.cardsPicked = append(c.cardsPicked, selectedCard)
@@ -213,12 +230,7 @@ func (c *cardpickController) onCardPicked(row, col int) {
 		}
 	}
 
-	{
-		enemySelectedCard := c.enemyCardsPool[len(c.enemyCardsPool)-1]
-		c.enemyCardsPool = c.enemyCardsPool[:len(c.enemyCardsPool)-1]
-		c.enemyCardsPicked = append(c.enemyCardsPicked, enemySelectedCard)
-		c.enemyLabel.Label = fmt.Sprintf("Enemy picks %s", styles.Background(enemySelectedCard.Info().Name))
-	}
+	c.pickEnemyCard()
 
 	selectedButton := c.cardButtons[row][col]
 	selectedButton.selected = true
