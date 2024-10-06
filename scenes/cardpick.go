@@ -35,6 +35,7 @@ type cardpickController struct {
 type cardpickButton struct {
 	selected bool
 	btn      *widget.Button
+	tt       *widget.Text
 	contents *widget.Container
 }
 
@@ -82,6 +83,11 @@ func (c *cardpickController) Init(ctx gscene.InitContext) {
 			stacked := widget.NewContainer(
 				widget.ContainerOpts.Layout(widget.NewStackedLayout()),
 			)
+			tooltip := game.G.UI.NewText(eui.TextConfig{
+				ForceBBCode: true,
+				Font:        assets.FontTiny,
+				Text:        "This is a tactic card,\ntry clicking it",
+			})
 			btn := game.G.UI.NewButton(eui.ButtonConfig{
 				Font:      assets.FontTiny,
 				MinWidth:  96,
@@ -89,6 +95,7 @@ func (c *cardpickController) Init(ctx gscene.InitContext) {
 				OnClick: func() {
 					c.onCardPicked(i, j)
 				},
+				Tooltip: tooltip,
 			})
 			stacked.AddChild(btn)
 
@@ -123,6 +130,7 @@ func (c *cardpickController) Init(ctx gscene.InitContext) {
 			c.cardButtons[i][j] = &cardpickButton{
 				btn:      btn,
 				contents: contents,
+				tt:       tooltip,
 			}
 		}
 	}
@@ -221,11 +229,15 @@ func (c *cardpickController) onCardPicked(row, col int) {
 	if len(c.cardsPicked) == 1 {
 		// The first move.
 		// Disable all buttons.
-		for _, buttons := range c.cardButtons {
-			for _, b := range buttons {
+		for row, buttons := range c.cardButtons {
+			for col, b := range buttons {
 				b.btn.GetWidget().Disabled = true
 				label := b.contents.Children()[0].(*widget.Text)
 				label.Color = styles.ColorNormal.Color()
+				b.tt.Label = strings.Join([]string{
+					"This tile contains a random tactic card",
+					"From the " + c.cardsSelection[row][col].Info().Category.String() + " category",
+				}, "\n")
 			}
 		}
 	}
@@ -234,6 +246,7 @@ func (c *cardpickController) onCardPicked(row, col int) {
 
 	selectedButton := c.cardButtons[row][col]
 	selectedButton.selected = true
+	selectedButton.tt.Label = selectedCard.Info().Description
 	selectedButton.btn.GetWidget().Disabled = true
 	{
 		selectedButton.contents.RemoveChildren()
@@ -284,6 +297,7 @@ func (c *cardpickController) onCardPicked(row, col int) {
 			b.btn.GetWidget().Disabled = false
 			b.contents.RemoveChildren()
 			card := c.cardsSelection[newRow][newCol]
+			b.tt.Label = card.Info().Description
 			words := strings.Fields(card.Info().Name)
 			for _, word := range words {
 				b.contents.AddChild(game.G.UI.NewText(eui.TextConfig{

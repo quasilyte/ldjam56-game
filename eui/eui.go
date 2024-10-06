@@ -3,6 +3,7 @@ package eui
 import (
 	"image/color"
 	"strings"
+	"time"
 
 	"github.com/ebitenui/ebitenui"
 	"github.com/ebitenui/ebitenui/image"
@@ -22,6 +23,7 @@ type Builder struct {
 	button     *buttonDefaults
 	tileButton *buttonDefaults
 	panel      *panelDefaults
+	tooltip    *panelDefaults
 
 	currentObject *SceneObject
 
@@ -122,6 +124,31 @@ func (b *Builder) Init() {
 			},
 		}
 	}
+	{
+		normal := loadNineSliced(l, assets.ImageUITooltip, 18, 18)
+		b.tooltip = &panelDefaults{
+			image: normal,
+			padding: widget.Insets{
+				Left:   8,
+				Right:  8,
+				Top:    8,
+				Bottom: 8,
+			},
+		}
+	}
+}
+
+func (b *Builder) NewTooltip(label *widget.Text) *widget.Container {
+	tt := widget.NewContainer(
+		widget.ContainerOpts.BackgroundImage(b.tooltip.image),
+		widget.ContainerOpts.Layout(widget.NewRowLayout(
+			widget.RowLayoutOpts.Direction(widget.DirectionVertical),
+			widget.RowLayoutOpts.Padding(b.tooltip.padding),
+			widget.RowLayoutOpts.Spacing(2),
+		)))
+	label.MaxWidth = 800
+	tt.AddChild(label)
+	return tt
 }
 
 type ButtonConfig struct {
@@ -133,6 +160,7 @@ type ButtonConfig struct {
 	MinHeight    int
 	Font         font.Face
 	LayoutData   any
+	Tooltip      *widget.Text
 }
 
 func (b *Builder) NewButton(config ButtonConfig) *widget.Button {
@@ -164,6 +192,13 @@ func (b *Builder) NewButton(config ButtonConfig) *widget.Button {
 
 	if config.MinWidth != 0 || config.MinHeight != 0 {
 		options = append(options, widget.ButtonOpts.WidgetOpts(widget.WidgetOpts.MinSize(config.MinWidth, config.MinHeight)))
+	}
+	if config.Tooltip != nil {
+		tt := widget.NewToolTip(
+			widget.ToolTipOpts.Content(b.NewTooltip(config.Tooltip)),
+			widget.ToolTipOpts.Delay(time.Second),
+		)
+		options = append(options, widget.ButtonOpts.WidgetOpts(widget.WidgetOpts.ToolTip(tt)))
 	}
 
 	buttonWidget := widget.NewButton(options...)

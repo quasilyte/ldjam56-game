@@ -17,6 +17,7 @@ func registerImageResources(loader *resource.Loader) {
 		ImageUITileButtonPressed:  {Path: "image/ui/tilebutton_pressed.png"},
 		ImageUITileButtonDisabled: {Path: "image/ui/tilebutton_disabled.png"},
 		ImageUIPanel:              {Path: "image/ui/panel.png"},
+		ImageUITooltip:            {Path: "image/ui/tooltip.png"},
 
 		ImageTilePlains:    {Path: "image/tile_plains.png"},
 		ImageTileMountains: {Path: "image/tile_mountains.png"},
@@ -59,6 +60,7 @@ const (
 	ImageUITileButtonPressed
 	ImageUITileButtonDisabled
 	ImageUIPanel
+	ImageUITooltip
 
 	ImageTilePlains
 	ImageTileMountains
