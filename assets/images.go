@@ -37,6 +37,8 @@ func registerImageResources(loader *resource.Loader) {
 		ImageProjectileLaser:   {Path: "image/projectile_laser.png"},
 		ImageProjectileMissile: {Path: "image/projectile_missile.png"},
 		ImageProjectileTank:    {Path: "image/projectile_tank.png"},
+
+		ImageExplosion: {Path: "image/explosion.png", FrameWidth: 12},
 	}
 
 	for id, info := range resources {
@@ -77,4 +79,6 @@ const (
 	ImageProjectileLaser
 	ImageProjectileMissile
 	ImageProjectileTank
+
+	ImageExplosion
 )

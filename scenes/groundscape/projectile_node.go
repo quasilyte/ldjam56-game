@@ -39,6 +39,13 @@ func (u *projectileNode) Init(scene *gscene.Scene) {
 	}
 
 	u.data.EventDisposed.Connect(nil, func(gsignal.Void) {
+		if u.data.Attacker.Stats.SplashDamage {
+			effect := newEffectNode(effectNodeConfig{
+				Sprite: game.G.NewSprite(assets.ImageExplosion),
+				Pos:    u.sprite.Pos.Resolve(),
+			})
+			scene.AddObject(effect)
+		}
 		u.Dispose()
 	})
 }
